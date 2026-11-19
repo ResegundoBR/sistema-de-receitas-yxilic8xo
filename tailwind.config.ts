@@ -27,8 +27,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter var', 'SF Pro Display', 'system-ui', 'sans-serif'],
-        display: ['SF Pro Display', 'Inter var', 'system-ui', 'sans-serif'],
+        sans: ['Inter var', 'Inter', 'SF Pro Display', 'system-ui', 'sans-serif'],
+        display: ['Archivo Black', 'Inter var', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -73,6 +73,18 @@ export default {
           'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
+        },
+        /* Paleta Rodela */
+        tomate: 'hsl(var(--tomate))',
+        espresso: {
+          DEFAULT: 'hsl(var(--espresso))',
+          soft: 'hsl(var(--espresso) / 0.72)',
+        },
+        creme: 'hsl(var(--creme))',
+        lima: 'hsl(var(--lima))',
+        areia: {
+          DEFAULT: 'hsl(var(--areia))',
+          soft: 'hsl(var(--areia) / 0.35)',
         },
         chart: {
           1: 'hsl(var(--chart-1))',

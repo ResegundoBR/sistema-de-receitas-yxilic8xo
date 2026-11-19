@@ -1,18 +1,15 @@
 import { useState, useEffect } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import {
-  UtensilsCrossed,
   Search,
   PlusCircle,
   BookMarked,
   ChefHat,
   User,
   LogOut,
-  LogIn,
   WifiOff,
   Menu,
   X,
-  Share2,
 } from 'lucide-react'
 import { authService } from '@/services/authService'
 import { User as UserType } from '@/types/recipe'
@@ -27,6 +24,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useToast } from '@/hooks/use-toast'
+import { RodelaLogo, RodelaMark } from '@/components/brand/RodelaMark'
 
 export default function Layout() {
   const [currentUser, setCurrentUser] = useState<UserType | null>(authService.getCurrentUser())
@@ -77,24 +75,23 @@ export default function Layout() {
     navigate('/')
   }
 
-  const navLinks = [
-    { label: 'Explorar', path: '/', icon: Search },
-    { label: 'Minha Cozinha', path: '/minha-cozinha', icon: ChefHat, authRequired: true },
-    { label: 'Coleções', path: '/colecoes', icon: BookMarked, authRequired: true },
-    {
-      label: 'Nova Receita',
-      path: '/receitas/nova',
-      icon: PlusCircle,
-      authRequired: true,
-      highlight: true,
-    },
-  ]
+  const activeLinkClass = (active: boolean) =>
+    `px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+      active
+        ? 'text-espresso bg-tomate/15'
+        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+    }`
+
+  const mobileLinkClass = (active: boolean) =>
+    `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium ${
+      active ? 'bg-tomate/15 text-espresso font-semibold' : 'text-foreground hover:bg-muted'
+    }`
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground selection:bg-amber-100 selection:text-amber-900">
+    <div className="flex flex-col min-h-screen bg-background text-foreground selection:bg-tomate/20 selection:text-espresso">
       {/* Offline Alert Banner */}
       {isOffline && (
-        <div className="bg-amber-600 text-white text-xs sm:text-sm font-medium py-1.5 px-4 flex items-center justify-center gap-2 text-center sticky top-0 z-50 shadow-sm animate-fade-in">
+        <div className="bg-espresso text-creme text-xs sm:text-sm font-medium py-1.5 px-4 flex items-center justify-center gap-2 text-center sticky top-0 z-50 animate-fade-in">
           <WifiOff className="w-4 h-4 shrink-0" />
           <span>
             Você está no <strong>Modo Offline</strong>. Acessando acervo salvo localmente.
@@ -103,36 +100,16 @@ export default function Layout() {
       )}
 
       {/* Main Top Header */}
-      <header className="sticky top-0 z-40 w-full border-b bg-card/90 backdrop-blur-md transition-all">
+      <header className="sticky top-0 z-40 w-full border-b bg-creme/95 backdrop-blur-md transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo & Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-orange-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform duration-200">
-              <UtensilsCrossed className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="font-serif-recipe font-bold text-xl sm:text-2xl text-foreground tracking-tight leading-none block">
-                Receitas
-                <span className="text-primary font-sans text-xs ml-1 font-semibold uppercase tracking-wider bg-orange-100 dark:bg-orange-950/60 text-primary px-1.5 py-0.5 rounded-md">
-                  Rede
-                </span>
-              </span>
-              <span className="text-[10px] text-muted-foreground uppercase tracking-widest hidden sm:block font-medium">
-                Acervo Pessoal & Rede
-              </span>
-            </div>
+          <Link to="/" className="flex items-center gap-2.5 group" aria-label="Rodela — início">
+            <RodelaLogo markClassName="w-8 h-8 group-hover:scale-105 transition-transform duration-200" />
           </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1 sm:gap-2">
-            <Link
-              to="/"
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                location.pathname === '/'
-                  ? 'text-primary bg-orange-50 dark:bg-orange-950/30'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-              }`}
-            >
+            <Link to="/" className={activeLinkClass(location.pathname === '/')}>
               Explorar
             </Link>
 
@@ -140,21 +117,13 @@ export default function Layout() {
               <>
                 <Link
                   to="/minha-cozinha"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname.startsWith('/minha-cozinha')
-                      ? 'text-primary bg-orange-50 dark:bg-orange-950/30'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                  }`}
+                  className={activeLinkClass(location.pathname.startsWith('/minha-cozinha'))}
                 >
                   Minha Cozinha
                 </Link>
                 <Link
                   to="/colecoes"
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname.startsWith('/colecoes')
-                      ? 'text-primary bg-orange-50 dark:bg-orange-950/30'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                  }`}
+                  className={activeLinkClass(location.pathname.startsWith('/colecoes'))}
                 >
                   Coleções
                 </Link>
@@ -167,24 +136,27 @@ export default function Layout() {
             <Button
               asChild
               size="sm"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm shadow-orange-500/25 rounded-full font-medium px-4 gap-1.5 hidden sm:inline-flex"
+              className="bg-tomate hover:bg-tomate/90 text-creme rounded-full font-semibold px-4 gap-1.5 hidden sm:inline-flex"
             >
-              <Link to={currentUser ? '/receitas/nova' : '/login'}>
+              <Link to={currentUser ? '/receitas/nova' : '/cadastro'}>
                 <PlusCircle className="w-4 h-4" />
-                <span>Nova Receita</span>
+                <span>{currentUser ? 'Nova Receita' : 'Criar Conta'}</span>
               </Link>
             </Button>
 
             {currentUser ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-orange-300 focus:outline-none transition-all">
-                    <Avatar className="w-9 h-9 border border-orange-200">
+                  <button
+                    className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-tomate/40 focus:outline-none transition-all"
+                    aria-label="Abrir menu da conta"
+                  >
+                    <Avatar className="w-9 h-9 border border-areia">
                       <AvatarImage
                         src={authService.getAvatarUrl(currentUser)}
                         alt={currentUser.display_name}
                       />
-                      <AvatarFallback className="bg-orange-100 text-orange-800 font-bold text-xs">
+                      <AvatarFallback className="bg-areia/40 text-espresso font-bold text-xs">
                         {currentUser.display_name.slice(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -202,19 +174,19 @@ export default function Layout() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to="/minha-cozinha" className="cursor-pointer gap-2">
-                      <ChefHat className="w-4 h-4 text-orange-600" />
+                      <ChefHat className="w-4 h-4 text-tomate" />
                       Minhas Receitas
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/colecoes" className="cursor-pointer gap-2">
-                      <BookMarked className="w-4 h-4 text-orange-600" />
+                      <BookMarked className="w-4 h-4 text-tomate" />
                       Receitas Salvas
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/perfil" className="cursor-pointer gap-2">
-                      <User className="w-4 h-4 text-orange-600" />
+                      <User className="w-4 h-4 text-tomate" />
                       Editar Perfil
                     </Link>
                   </DropdownMenuItem>
@@ -233,13 +205,6 @@ export default function Layout() {
                 <Button asChild variant="ghost" size="sm" className="font-medium text-foreground">
                   <Link to="/login">Entrar</Link>
                 </Button>
-                <Button
-                  asChild
-                  size="sm"
-                  className="bg-foreground text-background hover:bg-foreground/90 font-medium hidden sm:inline-flex rounded-full"
-                >
-                  <Link to="/cadastro">Cadastrar</Link>
-                </Button>
               </div>
             )}
 
@@ -256,47 +221,47 @@ export default function Layout() {
 
         {/* Mobile Dropdown Panel */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-b bg-card px-4 pt-2 pb-4 space-y-2 animate-slide-down">
+          <div className="md:hidden border-b bg-creme px-4 pt-2 pb-4 space-y-2 animate-slide-down">
             <Link
               to="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted"
+              className={mobileLinkClass(false)}
             >
-              <Search className="w-4 h-4 text-orange-600" />
-              Explorar Acervo
+              <Search className="w-4 h-4 text-tomate" />
+              Explorar Receitas
             </Link>
             {currentUser ? (
               <>
                 <Link
                   to="/receitas/nova"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium bg-orange-50 text-orange-700 font-semibold"
+                  className={mobileLinkClass(false) + ' bg-tomate text-creme font-semibold'}
                 >
                   <PlusCircle className="w-4 h-4" />
-                  Cadastrar Receita
+                  Nova Receita
                 </Link>
                 <Link
                   to="/minha-cozinha"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted"
+                  className={mobileLinkClass(location.pathname.startsWith('/minha-cozinha'))}
                 >
-                  <ChefHat className="w-4 h-4 text-orange-600" />
+                  <ChefHat className="w-4 h-4 text-tomate" />
                   Minha Cozinha
                 </Link>
                 <Link
                   to="/colecoes"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted"
+                  className={mobileLinkClass(location.pathname.startsWith('/colecoes'))}
                 >
-                  <BookMarked className="w-4 h-4 text-orange-600" />
+                  <BookMarked className="w-4 h-4 text-tomate" />
                   Coleções & Salvos
                 </Link>
                 <Link
                   to="/perfil"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted"
+                  className={mobileLinkClass(false)}
                 >
-                  <User className="w-4 h-4 text-orange-600" />
+                  <User className="w-4 h-4 text-tomate" />
                   Meu Perfil
                 </Link>
                 <button
@@ -314,12 +279,12 @@ export default function Layout() {
               <div className="pt-2 flex flex-col gap-2">
                 <Button asChild variant="outline" className="w-full">
                   <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                    Entrar na Conta
+                    Entrar
                   </Link>
                 </Button>
-                <Button asChild className="w-full bg-primary text-primary-foreground">
+                <Button asChild className="w-full bg-tomate hover:bg-tomate/90 text-creme">
                   <Link to="/cadastro" onClick={() => setMobileMenuOpen(false)}>
-                    Criar Conta Grátis
+                    Criar Minha Conta
                   </Link>
                 </Button>
               </div>
@@ -337,23 +302,24 @@ export default function Layout() {
       <footer className="border-t bg-card/60 py-8 text-center text-xs text-muted-foreground hidden md:block">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-serif-recipe font-bold text-foreground">Sistema de Receitas</span>
-            <span>— Acervo Pessoal & Rede Culinária</span>
+            <RodelaMark className="w-4 h-4" />
+            <span className="font-display text-foreground">Rodela</span>
+            <span>— Receita de gente de verdade.</span>
           </div>
           <div className="flex items-center gap-4 text-xs">
-            <span>Links públicos otimizados para WhatsApp</span>
+            <span>Receitas que abrem direto no WhatsApp</span>
             <span>•</span>
-            <span>Suporte Offline PWA</span>
+            <span>Funciona até sem internet</span>
           </div>
         </div>
       </footer>
 
       {/* Mobile Bottom Navigation Bar (App Experience) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-lg border-t border-border px-2 py-1.5 flex items-center justify-around shadow-lg">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-creme/95 backdrop-blur-lg border-t border-border px-2 py-1.5 flex items-center justify-around">
         <Link
           to="/"
           className={`flex flex-col items-center py-1 px-3 rounded-lg text-[10px] font-medium transition-colors ${
-            location.pathname === '/' ? 'text-primary' : 'text-muted-foreground'
+            location.pathname === '/' ? 'text-tomate' : 'text-muted-foreground'
           }`}
         >
           <Search className="w-5 h-5 mb-0.5" />
@@ -361,8 +327,9 @@ export default function Layout() {
         </Link>
 
         <Link
-          to="/receitas/nova"
-          className="flex flex-col items-center justify-center -mt-5 bg-gradient-to-tr from-amber-600 to-orange-500 text-white rounded-full p-3 shadow-lg shadow-orange-500/30 hover:scale-105 active:scale-95 transition-all"
+          to={currentUser ? '/receitas/nova' : '/cadastro'}
+          aria-label="Nova receita"
+          className="flex flex-col items-center justify-center -mt-5 bg-tomate text-creme rounded-full p-3 hover:scale-105 active:scale-95 transition-all"
         >
           <PlusCircle className="w-6 h-6" />
         </Link>
@@ -370,9 +337,7 @@ export default function Layout() {
         <Link
           to={currentUser ? '/minha-cozinha' : '/login'}
           className={`flex flex-col items-center py-1 px-3 rounded-lg text-[10px] font-medium transition-colors ${
-            location.pathname.startsWith('/minha-cozinha')
-              ? 'text-primary'
-              : 'text-muted-foreground'
+            location.pathname.startsWith('/minha-cozinha') ? 'text-tomate' : 'text-muted-foreground'
           }`}
         >
           <ChefHat className="w-5 h-5 mb-0.5" />
@@ -382,7 +347,7 @@ export default function Layout() {
         <Link
           to={currentUser ? '/colecoes' : '/login'}
           className={`flex flex-col items-center py-1 px-3 rounded-lg text-[10px] font-medium transition-colors ${
-            location.pathname.startsWith('/colecoes') ? 'text-primary' : 'text-muted-foreground'
+            location.pathname.startsWith('/colecoes') ? 'text-tomate' : 'text-muted-foreground'
           }`}
         >
           <BookMarked className="w-5 h-5 mb-0.5" />

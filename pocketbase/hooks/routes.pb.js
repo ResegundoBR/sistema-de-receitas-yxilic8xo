@@ -36,7 +36,7 @@ routerAdd('GET', '/r/{username}/{slug}', (e) => {
   const title = recipe.getString('title') || 'Receita'
   const description =
     recipe.getString('description') ||
-    'Veja o passo a passo completo desta receita deliciosa no Sistema de Receitas.'
+    'Receita de gente de verdade: veja o passo a passo completo no Rodela.'
   const coverFile = recipe.getString('cover')
 
   let imageUrl = 'https://img.usecurling.com/p/1200/630?q=recipe,food'
@@ -52,7 +52,7 @@ routerAdd('GET', '/r/{username}/{slug}', (e) => {
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <title>${title} | Sistema de Receitas</title>
+  <title>${title} | Rodela</title>
   <meta name="description" content="${description}">
   <meta property="og:type" content="article">
   <meta property="og:title" content="${title}">

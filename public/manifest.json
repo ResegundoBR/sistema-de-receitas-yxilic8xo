@@ -1,21 +1,30 @@
 {
-  "short_name": "Receitas",
-  "name": "Sistema de Receitas — Acervo & Rede Culinária",
+  "short_name": "Rodela",
+  "name": "Rodela — Receita de gente de verdade",
+  "description": "Receita de gente de verdade. Cadastre a sua, veja a dos outros, faça do seu jeito.",
   "icons": [
     {
-      "src": "https://img.usecurling.com/i?q=chef&color=orange&shape=fill",
+      "src": "/pwa-icon-192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
     },
     {
-      "src": "https://img.usecurling.com/i?q=chef&color=orange&shape=fill",
+      "src": "/pwa-icon-512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-icon-maskable-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
   "start_url": "/",
-  "background_color": "#FFFBF7",
-  "theme_color": "#EA580C",
+  "background_color": "#12100E",
+  "theme_color": "#FF4D2E",
   "display": "standalone",
   "orientation": "portrait-primary",
   "scope": "/"

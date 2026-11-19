@@ -1,22 +1,35 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { recipeService, taxonomyService } from '@/services/recipeService'
+import { authService } from '@/services/authService'
 import { Recipe, Category, Tag } from '@/types/recipe'
 import { RecipeCard } from '@/components/RecipeCard'
+import { RodelaMark } from '@/components/brand/RodelaMark'
 import {
   Search,
   SlidersHorizontal,
   X,
-  Sparkles,
   ChefHat,
   Tag as TagIcon,
   Layers,
-  RefreshCw,
+  ArrowRight,
+  ArrowDown,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+
+const dimensionLabels: Record<string, string> = {
+  dieta: 'Dieta & Preferência',
+  tecnica: 'Técnica & Método',
+  ingrediente: 'Ingredientes Chave',
+  ocasiao: 'Ocasião & Refeição',
+  regiao: 'Origem & Tradição',
+  equipamento: 'Equipamento',
+  custo: 'Custo & Economia',
+  estacao: 'Estação do Ano',
+}
 
 export default function Index() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -27,13 +40,17 @@ export default function Index() {
     : []
 
   const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [featured, setFeatured] = useState<Recipe[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [tags, setTags] = useState<Tag[]>([])
   const [loading, setLoading] = useState(true)
+  const [featuredLoading, setFeaturedLoading] = useState(true)
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false)
 
   // Local search query input state
   const [searchInput, setSearchInput] = useState(searchFromUrl)
+
+  const currentUser = authService.getCurrentUser()
 
   // Load taxonomies once
   useEffect(() => {
@@ -50,6 +67,22 @@ export default function Index() {
       }
     }
     loadTaxonomies()
+  }, [])
+
+  // Featured recipes as PROOF of content (independent from search state)
+  useEffect(() => {
+    async function loadFeatured() {
+      setFeaturedLoading(true)
+      try {
+        const res = await recipeService.getPublicRecipes({ page: 1, perPage: 6 })
+        setFeatured(res.items)
+      } catch (err) {
+        console.error('Error loading featured recipes:', err)
+      } finally {
+        setFeaturedLoading(false)
+      }
+    }
+    loadFeatured()
   }, [])
 
   // Fetch recipes whenever search params change
@@ -83,6 +116,7 @@ export default function Index() {
       newParams.delete('q')
     }
     setSearchParams(newParams)
+    document.getElementById('receitas')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   // Toggle Category Filter
@@ -121,18 +155,7 @@ export default function Index() {
   }
 
   const hasActiveFilters = Boolean(searchFromUrl || categoryFromUrl || tagsFromUrl.length > 0)
-
-  // Group tags by dimension
-  const dimensionLabels: Record<string, string> = {
-    dieta: 'Dieta & Preferência',
-    tecnica: 'Técnica & Método',
-    ingrediente: 'Ingredientes Chave',
-    ocasiao: 'Ocasião & Refeição',
-    regiao: 'Origem & Tradição',
-    equipamento: 'Equipamento',
-    custo: 'Custo & Economia',
-    estacao: 'Estação do Ano',
-  }
+  const isBrowsing = hasActiveFilters
 
   const tagsByDimension = tags.reduce(
     (acc, tag) => {
@@ -144,43 +167,79 @@ export default function Index() {
     {} as Record<string, Tag[]>,
   )
 
-  // Top shallow categories (depth 1)
+  // Shallow category tree (depth 1 = raiz)
   const rootCategories = categories.filter((c) => c.depth === 1 || !c.parent)
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section with appetizing styling */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-orange-100/50 via-amber-50/30 to-background border-b border-border/40 py-10 sm:py-16 px-4">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <Badge className="bg-orange-500/10 text-orange-700 dark:text-orange-300 border-orange-200/50 mb-3 px-3 py-1 font-semibold text-xs tracking-wide">
-            Acervo Pessoal & Rede de Receitas
-          </Badge>
-          <h1 className="font-serif-recipe text-3xl sm:text-5xl lg:text-6xl font-extrabold text-foreground tracking-tight leading-tight mb-4">
-            Cozinhe, registre e compartilhe suas melhores receitas
+      {/* ============ HERO DE CONVERSÃO ============ */}
+      <section className="relative overflow-hidden bg-creme border-b border-border/60">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-10 sm:pt-16 sm:pb-14 text-center">
+          <RodelaMark className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-5" />
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-espresso leading-[1.05] tracking-tight mb-4">
+            Receita de
+            <br />
+            gente de verdade.
           </h1>
-          <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
-            Acervo culinário com ingredientes estruturados, busca sem acentos e links otimizados
-            para compartilhar no WhatsApp.
+          <p className="text-base sm:text-lg text-espresso-soft max-w-xl mx-auto mb-8 leading-relaxed">
+            Cadastre a sua, veja a dos outros, faça do seu jeito.
           </p>
 
-          {/* Search Bar Form */}
-          <form
-            onSubmit={handleSearchSubmit}
-            className="relative max-w-2xl mx-auto flex items-center"
-          >
-            <div className="relative w-full shadow-lg shadow-orange-500/5 rounded-2xl">
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+            {currentUser ? (
+              <Button
+                asChild
+                size="lg"
+                className="w-full sm:w-auto bg-tomate hover:bg-tomate/90 text-creme font-semibold rounded-full px-8 py-6 text-base gap-2"
+              >
+                <Link to="/minha-cozinha">
+                  Minha cozinha
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                asChild
+                size="lg"
+                className="w-full sm:w-auto bg-tomate hover:bg-tomate/90 text-creme font-semibold rounded-full px-8 py-6 text-base gap-2"
+              >
+                <Link to="/cadastro">
+                  Criar minha conta
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </Button>
+            )}
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto border-espresso/25 text-espresso hover:bg-espresso/5 font-semibold rounded-full px-8 py-6 text-base gap-2"
+            >
+              <a href="#receitas">
+                Ver receitas
+                <ArrowDown className="w-5 h-5" />
+              </a>
+            </Button>
+          </div>
+
+          {/* Busca */}
+          <form onSubmit={handleSearchSubmit} className="relative max-w-xl mx-auto">
+            <div className="relative flex items-center">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
               <Input
                 type="text"
-                placeholder="Busque por pão, queijo, bolo, chocolate... (sem se preocupar com acentos)"
+                aria-label="Buscar receitas"
+                placeholder="Busque por pão, bolo, moqueca…"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="w-full pl-12 pr-28 py-6 rounded-2xl border-orange-200 focus-visible:ring-primary text-base bg-card shadow-inner"
+                className="w-full pl-12 pr-24 py-6 rounded-2xl border-areia bg-white text-base focus-visible:ring-tomate"
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
                 {searchInput && (
                   <button
                     type="button"
+                    aria-label="Limpar busca"
                     onClick={() => {
                       setSearchInput('')
                       const newParams = new URLSearchParams(searchParams)
@@ -195,23 +254,88 @@ export default function Index() {
                 <Button
                   type="submit"
                   size="sm"
-                  className="rounded-xl px-4 py-2 font-semibold bg-primary hover:bg-primary/90"
+                  className="rounded-xl px-4 py-2 font-semibold bg-espresso hover:bg-espresso/90 text-creme"
                 >
                   Buscar
                 </Button>
               </div>
             </div>
+            <p className="text-[11px] text-muted-foreground mt-2">
+              Achamos a receita mesmo se você digitar sem acento.
+            </p>
           </form>
         </div>
       </section>
 
-      {/* Main Browse Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Category Shallow Navigation Chips */}
+      {/* ============ PROVA: RECEITAS REAIS ============ */}
+      <section id="receitas" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 scroll-mt-20">
+        <div className="flex items-end justify-between mb-6">
+          <div>
+            <h2 className="font-display text-xl sm:text-2xl text-espresso">Saindo das cozinhas</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Receitas reais, de gente de verdade. Abra, cozinhe e faça do seu jeito.
+            </p>
+          </div>
+        </div>
+
+        {featuredLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="flex flex-col rounded-2xl border border-border p-4 space-y-3">
+                <Skeleton className="w-full aspect-[4/3] rounded-xl" />
+                <Skeleton className="w-2/3 h-5 rounded" />
+                <Skeleton className="w-full h-4 rounded" />
+              </div>
+            ))}
+          </div>
+        ) : featured.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {featured.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-10 px-4 bg-card rounded-2xl border border-dashed border-border/80">
+            <ChefHat className="w-8 h-8 text-areia mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">
+              As primeiras receitas estão chegando. Que tal a sua ser uma delas?
+            </p>
+          </div>
+        )}
+      </section>
+
+      {/* ============ MANIFESTO ============ */}
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-4">
+        <div className="bg-espresso rounded-3xl px-6 py-10 sm:px-12 sm:py-12 text-center">
+          <RodelaMark className="w-10 h-10 mx-auto mb-5" arc="var(--creme)" dot="var(--tomate)" />
+          <p className="font-display text-creme text-lg sm:text-2xl leading-relaxed">
+            Toda receita começou na cozinha de alguém.
+          </p>
+          <p className="text-creme/80 text-sm sm:text-base leading-relaxed mt-4 max-w-xl mx-auto">
+            Aqui ela tem nome, tem dono e tem história. E se você fizer diferente, isso não é erro —
+            é uma rodela da anterior.
+          </p>
+          {!currentUser && (
+            <Button
+              asChild
+              className="mt-8 bg-tomate hover:bg-tomate/90 text-creme font-semibold rounded-full px-7 py-5 gap-2"
+            >
+              <Link to="/cadastro">
+                Colocar minha receita lá dentro
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
+          )}
+        </div>
+      </section>
+
+      {/* ============ EXPLORAR: CATEGORIAS + FACETAS + RESULTADOS ============ */}
+      <div id="explorar" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 scroll-mt-20">
+        {/* Categorias rasas (árvore de profundidade 1) */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Layers className="w-4 h-4 text-orange-600" />
+              <Layers className="w-4 h-4 text-tomate" />
               Categorias
             </h2>
             <Button
@@ -220,18 +344,18 @@ export default function Index() {
               onClick={() => setFilterDrawerOpen(!filterDrawerOpen)}
               className="text-xs gap-1.5 rounded-full border-border/80"
             >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-orange-600" />
-              <span>Filtro por Tags ({tagsFromUrl.length})</span>
+              <SlidersHorizontal className="w-3.5 h-3.5 text-tomate" />
+              <span>Filtrar {tagsFromUrl.length > 0 ? `(${tagsFromUrl.length})` : 'por tags'}</span>
             </Button>
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-1 px-1">
             <button
               onClick={() => handleSelectCategory('')}
               className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
                 !categoryFromUrl
-                  ? 'bg-foreground text-background shadow-sm'
-                  : 'bg-card border border-border text-foreground hover:bg-muted'
+                  ? 'bg-espresso text-creme'
+                  : 'bg-creme border border-border text-espresso hover:border-tomate/50'
               }`}
             >
               Todas as Receitas
@@ -242,28 +366,26 @@ export default function Index() {
                 <button
                   key={cat.id}
                   onClick={() => handleSelectCategory(cat.slug)}
-                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
                     isSelected
-                      ? 'bg-primary text-white shadow-md shadow-orange-500/20'
-                      : 'bg-card border border-border text-foreground hover:border-orange-300'
+                      ? 'bg-tomate text-creme font-semibold'
+                      : 'bg-creme border border-border text-espresso hover:border-tomate/50'
                   }`}
                 >
-                  <span>{cat.name}</span>
+                  {cat.name}
                 </button>
               )
             })}
           </div>
         </div>
 
-        {/* Filter Drawer / Panel for Tag Intersections (Tags com Dimensões) */}
+        {/* Painel de facetas (interseção de tags) */}
         {filterDrawerOpen && (
-          <div className="mb-8 p-5 sm:p-6 bg-card rounded-2xl border border-orange-200/80 shadow-md animate-fade-in">
+          <div className="mb-8 p-5 sm:p-6 bg-creme rounded-2xl border border-areia/70 animate-fade-in">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <TagIcon className="w-5 h-5 text-primary" />
-                <h3 className="font-semibold text-foreground text-base">
-                  Filtro Multifacetado por Tags
-                </h3>
+                <TagIcon className="w-5 h-5 text-tomate" />
+                <h3 className="font-display text-espresso text-base">Filtrar por tags</h3>
               </div>
               <div className="flex items-center gap-2">
                 {tagsFromUrl.length > 0 && (
@@ -277,12 +399,13 @@ export default function Index() {
                     }}
                     className="text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
                   >
-                    Limpar Tags
+                    Limpar tags
                   </Button>
                 )}
                 <button
                   onClick={() => setFilterDrawerOpen(false)}
                   className="p-1 rounded-full hover:bg-muted text-muted-foreground"
+                  aria-label="Fechar filtros"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -290,8 +413,7 @@ export default function Index() {
             </div>
 
             <p className="text-xs text-muted-foreground mb-4">
-              Selecione tags para filtrar por <strong>interseção</strong>: receitas exibidas
-              precisam conter <em>todas</em> as tags escolhidas simultaneamente.
+              Marque duas tags e mostramos só as receitas que têm as duas.
             </p>
 
             <div className="space-y-4">
@@ -307,14 +429,13 @@ export default function Index() {
                         <button
                           key={tag.id}
                           onClick={() => handleToggleTag(tag.slug)}
-                          className={`text-xs px-3 py-1.5 rounded-lg border transition-all flex items-center gap-1.5 ${
+                          className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${
                             isTagSelected
-                              ? 'bg-amber-600 text-white border-amber-600 font-semibold shadow-sm'
-                              : 'bg-background hover:bg-orange-50 border-border text-foreground'
+                              ? 'bg-lima text-espresso border-lima font-semibold'
+                              : 'bg-background hover:bg-areia-soft border-border text-espresso'
                           }`}
                         >
-                          <span>{tag.name}</span>
-                          {isTagSelected && <X className="w-3 h-3" />}
+                          {tag.name}
                         </button>
                       )
                     })}
@@ -325,17 +446,16 @@ export default function Index() {
           </div>
         )}
 
-        {/* Active Filters Bar */}
-        {hasActiveFilters && (
-          <div className="mb-6 flex flex-wrap items-center gap-2 p-3 bg-orange-50/60 dark:bg-orange-950/20 rounded-xl border border-orange-200/60">
-            <span className="text-xs font-semibold text-orange-900 dark:text-orange-200">
-              Filtros ativos:
-            </span>
+        {/* Barra de filtros ativos */}
+        {isBrowsing && (
+          <div className="mb-6 flex flex-wrap items-center gap-2 p-3 bg-areia-soft rounded-xl border border-areia/50">
+            <span className="text-xs font-semibold text-espresso">Filtros ativos:</span>
 
             {searchFromUrl && (
-              <Badge variant="secondary" className="gap-1 bg-white dark:bg-card border text-xs">
+              <Badge variant="secondary" className="gap-1 bg-creme border text-espresso text-xs">
                 Busca: "{searchFromUrl}"
                 <button
+                  aria-label="Remover busca"
                   onClick={() => {
                     const newParams = new URLSearchParams(searchParams)
                     newParams.delete('q')
@@ -350,10 +470,10 @@ export default function Index() {
             )}
 
             {categoryFromUrl && (
-              <Badge variant="secondary" className="gap-1 bg-white dark:bg-card border text-xs">
-                Categoria:{' '}
+              <Badge variant="secondary" className="gap-1 bg-creme border text-espresso text-xs">
                 {categories.find((c) => c.slug === categoryFromUrl)?.name || categoryFromUrl}
                 <button
+                  aria-label="Remover categoria"
                   onClick={() => handleSelectCategory(categoryFromUrl)}
                   className="hover:text-destructive ml-0.5"
                 >
@@ -366,13 +486,10 @@ export default function Index() {
               <Badge
                 key={ts}
                 variant="secondary"
-                className="gap-1 bg-white dark:bg-card border text-xs"
+                className="gap-1 bg-lima border border-lima text-espresso text-xs"
               >
-                Tag: #{tags.find((t) => t.slug === ts)?.name || ts}
-                <button
-                  onClick={() => handleToggleTag(ts)}
-                  className="hover:text-destructive ml-0.5"
-                >
+                #{tags.find((t) => t.slug === ts)?.name || ts}
+                <button aria-label="Remover tag" onClick={() => handleToggleTag(ts)}>
                   <X className="w-3 h-3" />
                 </button>
               </Badge>
@@ -382,61 +499,63 @@ export default function Index() {
               variant="link"
               size="sm"
               onClick={handleClearAllFilters}
-              className="text-xs text-orange-700 dark:text-orange-400 p-0 h-auto font-medium ml-auto"
+              className="text-xs text-tomate p-0 h-auto font-medium ml-auto"
             >
-              Limpar todos os filtros
+              Limpar tudo
             </Button>
           </div>
         )}
 
-        {/* Recipe Grid Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-serif-recipe font-bold text-xl sm:text-2xl text-foreground">
-            {searchFromUrl ? `Resultados para "${searchFromUrl}"` : 'Receitas em Destaque'}
-          </h2>
-          <span className="text-xs sm:text-sm text-muted-foreground font-medium">
-            {loading
-              ? 'Carregando...'
-              : `${recipes.length} ${recipes.length === 1 ? 'receita encontrada' : 'receitas encontradas'}`}
-          </span>
-        </div>
-
-        {/* Recipe Grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="flex flex-col rounded-2xl border border-border p-4 space-y-3">
-                <Skeleton className="w-full aspect-[4/3] rounded-xl" />
-                <Skeleton className="w-2/3 h-5 rounded" />
-                <Skeleton className="w-full h-4 rounded" />
-                <Skeleton className="w-1/2 h-4 rounded" />
-              </div>
-            ))}
-          </div>
-        ) : recipes.length === 0 ? (
-          <div className="text-center py-16 px-4 bg-card rounded-2xl border border-dashed border-border/80">
-            <div className="w-16 h-16 rounded-2xl bg-orange-100 text-orange-700 flex items-center justify-center mx-auto mb-4">
-              <ChefHat className="w-8 h-8" />
+        {/* Resultados */}
+        {isBrowsing && (
+          <>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-display text-lg sm:text-xl text-espresso">
+                {searchFromUrl ? `Resultados para "${searchFromUrl}"` : 'Receitas filtradas'}
+              </h2>
+              <span className="text-xs sm:text-sm text-muted-foreground font-medium tabular-nums">
+                {loading ? '…' : `${recipes.length}`}
+              </span>
             </div>
-            <h3 className="font-serif-recipe font-bold text-xl text-foreground mb-2">
-              Nenhuma receita encontrada
-            </h3>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
-              Não encontramos receitas com os filtros selecionados. Tente buscar por outros termos
-              sem acento ou remover filtros de tags.
-            </p>
-            {hasActiveFilters && (
-              <Button onClick={handleClearAllFilters} variant="outline" className="rounded-xl">
-                Limpar Filtros e Ver Todas
-              </Button>
+
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col rounded-2xl border border-border p-4 space-y-3"
+                  >
+                    <Skeleton className="w-full aspect-[4/3] rounded-xl" />
+                    <Skeleton className="w-2/3 h-5 rounded" />
+                    <Skeleton className="w-1/2 h-4 rounded" />
+                  </div>
+                ))}
+              </div>
+            ) : recipes.length === 0 ? (
+              <div className="text-center py-14 px-4 bg-card rounded-2xl border border-dashed border-border/80">
+                <ChefHat className="w-10 h-10 text-areia mx-auto mb-3" />
+                <h3 className="font-display text-lg text-espresso mb-2">
+                  Nada por aqui com esses filtros
+                </h3>
+                <p className="text-sm text-muted-foreground max-w-md mx-auto mb-5">
+                  Tente buscar sem acento (ex.: "pao" acha "Pão") ou remova alguma tag.
+                </p>
+                <Button
+                  onClick={handleClearAllFilters}
+                  variant="outline"
+                  className="rounded-full border-espresso/25 text-espresso"
+                >
+                  Ver todas as receitas
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-4">
+                {recipes.map((recipe) => (
+                  <RecipeCard key={recipe.id} recipe={recipe} />
+                ))}
+              </div>
             )}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
-            ))}
-          </div>
+          </>
         )}
       </div>
     </div>

@@ -1,7 +1,7 @@
-/* Global styles - Theme, font, utilities, animations and global components */
+/* Rodela — estilos globais (marca oficial) */
 
-/* Fonts: Plus Jakarta Sans for UI + Playfair Display for warm culinary headings */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,600..900;1,600..900&display=swap');
+/* Tipografia da marca: Archivo Black (títulos) + Inter (corpo, números tabulares) */
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,104 +9,90 @@
 
 @layer base {
   :root {
-    /* Warm, appetizing culinary palette: Amber 600, Terracotta, warm cream background */
-    --background: 36 33% 98%;
-    --foreground: 24 25% 15%;
+    /* Paleta Rodela */
+    /* Tomate #FF4D2E (primária) */
+    --background: 39 44% 94%; /* Creme #F7F2E8 — fundo padrão */
+    --foreground: 30 13% 6%; /* Espresso #12100E — texto */
 
-    --card: 0 0% 100%;
-    --card-foreground: 24 25% 15%;
+    --card: 40 60% 99%;
+    --card-foreground: 30 13% 6%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 24 25% 15%;
+    --popover: 40 60% 99%;
+    --popover-foreground: 30 13% 6%;
 
-    /* Primary: vibrant warm terracotta/amber #EA580C -> 24 88% 48% */
-    --primary: 24 88% 48%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 11 100% 59%; /* Tomate */
+    --primary-foreground: 39 44% 97%; /* Creme sobre tomate */
 
-    /* Secondary: warm honey cream */
-    --secondary: 35 75% 94%;
-    --secondary-foreground: 24 60% 25%;
+    --secondary: 34 53% 86%; /* Areia clara */
+    --secondary-foreground: 30 13% 12%;
 
-    --muted: 36 20% 93%;
-    --muted-foreground: 24 12% 45%;
+    --muted: 39 30% 90%;
+    --muted-foreground: 30 8% 40%;
 
-    --accent: 38 92% 50%;
-    --accent-foreground: 24 60% 15%;
+    --accent: 74 86% 62%; /* Verde-limão — só PREENCHIMENTO */
+    --accent-foreground: 30 13% 6%; /* texto espresso sobre limão */
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 78% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 35 25% 88%;
-    --input: 35 25% 88%;
-    --ring: 24 88% 48%;
+    --border: 34 35% 84%;
+    --input: 34 35% 82%;
+    --ring: 11 100% 59%;
 
-    --radius: 0.75rem;
+    --radius: 0.9rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Extras da marca (usar via tailwind: text-tomate, bg-espresso...) */
+    --tomate: 11 100% 59%;
+    --espresso: 30 13% 6%;
+    --creme: 39 44% 94%;
+    --lima: 74 86% 62%;
+    --areia: 34 53% 68%;
 
-    --sidebar-foreground: 222.2 84% 4.9%;
+    --sidebar-background: 39 44% 94%;
+    --sidebar-foreground: 30 13% 6%;
+    --sidebar-primary: 11 100% 59%;
+    --sidebar-primary-foreground: 39 44% 97%;
+    --sidebar-accent: 74 86% 62%;
+    --sidebar-accent-foreground: 30 13% 6%;
+    --sidebar-border: 34 35% 84%;
+    --sidebar-ring: 11 100% 59%;
 
-    --sidebar-primary: 222.2 84% 4.9%;
-
-    --sidebar-primary-foreground: 0 0% 100%;
-
-    --sidebar-accent: 210 40% 98%;
-
-    --sidebar-accent-foreground: 222.2 84% 4.9%;
-
-    --sidebar-border: 214.3 31.8% 91.4%;
-
-    --sidebar-ring: 222.2 84% 4.9%;
-
-    --chart-1: 34 100% 44%;
-    --chart-2: 189 100% 38%;
-    --chart-3: 209 100% 32%;
-    --chart-4: 42 100% 50%;
-    --chart-5: 33 100% 50%;
+    --chart-1: 11 100% 59%;
+    --chart-2: 34 53% 68%;
+    --chart-3: 74 86% 62%;
+    --chart-4: 30 13% 20%;
+    --chart-5: 39 44% 80%;
   }
 
   .dark {
-    --background: 24 30% 8%;
-    --foreground: 36 30% 95%;
+    /* Invertida: creme sobre espresso */
+    --background: 30 13% 6%;
+    --foreground: 39 44% 94%;
 
-    --card: 24 25% 12%;
-    --card-foreground: 36 30% 95%;
+    --card: 30 10% 10%;
+    --card-foreground: 39 44% 94%;
 
-    --popover: 24 25% 12%;
-    --popover-foreground: 36 30% 95%;
+    --popover: 30 10% 10%;
+    --popover-foreground: 39 44% 94%;
 
-    --primary: 24 88% 50%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 11 100% 59%;
+    --primary-foreground: 39 44% 97%;
 
-    --secondary: 24 20% 18%;
-    --secondary-foreground: 36 30% 90%;
+    --secondary: 30 8% 16%;
+    --secondary-foreground: 39 30% 90%;
 
-    --muted: 24 15% 20%;
-    --muted-foreground: 36 15% 65%;
+    --muted: 30 8% 14%;
+    --muted-foreground: 34 15% 68%;
 
-    --accent: 38 92% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 74 86% 62%;
+    --accent-foreground: 30 13% 6%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 78% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 24 20% 22%;
-    --input: 24 20% 22%;
-    --ring: 24 88% 50%;
-    --sidebar-background: 222.2 84% 4.9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 222.2 84% 4.9%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222.2 84% 4.9%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222.2 84% 4.9%;
-    --sidebar-ring: 222.2 84% 4.9%;
-
-    --chart-1: 270 100% 44%;
-    --chart-2: 164 100% 38%;
-    --chart-3: 43 100% 32%;
-    --chart-4: 340 100% 50%;
-    --chart-5: 10 100% 50%;
+    --border: 30 8% 18%;
+    --input: 30 8% 18%;
+    --ring: 11 100% 59%;
   }
 
   * {
@@ -115,11 +101,22 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-feature-settings:
+      'tnum' 1,
+      'cv05' 1; /* números tabulares */
   }
 
+  /* Títulos da marca: Archivo Black, sem serifa, sem gradiente, sem sombra */
   .font-serif-recipe {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Archivo Black', 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  .font-display {
+    font-family: 'Archivo Black', 'Inter', system-ui, sans-serif;
+    font-weight: 400;
   }
 
   /* NEVER REMOVE THIS */
