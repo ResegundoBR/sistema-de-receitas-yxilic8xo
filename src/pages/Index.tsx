@@ -4,6 +4,7 @@ import { recipeService, taxonomyService } from '@/services/recipeService'
 import { authService } from '@/services/authService'
 import { Recipe, Category, Tag } from '@/types/recipe'
 import { RecipeCard } from '@/components/RecipeCard'
+import { DragScrollRow } from '@/components/DragScrollRow'
 import { RodelaMark } from '@/components/brand/RodelaMark'
 import {
   Search,
@@ -284,7 +285,7 @@ export default function Index() {
               </Button>
             </div>
 
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-1 px-1">
+            <DragScrollRow className="pb-2">
               <button
                 onClick={() => handleSelectCategory('')}
                 className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
@@ -311,7 +312,7 @@ export default function Index() {
                   </button>
                 )
               })}
-            </div>
+            </DragScrollRow>
           </div>
 
           {/* Painel de facetas (interseção de tags) */}
@@ -357,14 +358,14 @@ export default function Index() {
                     <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
                       {dimensionLabels[dimension] || dimension}
                     </span>
-                    <div className="flex flex-wrap gap-2">
+                    <DragScrollRow className="items-start">
                       {dimensionTags.map((tag) => {
                         const isTagSelected = tagsFromUrl.includes(tag.slug)
                         return (
                           <button
                             key={tag.id}
                             onClick={() => handleToggleTag(tag.slug)}
-                            className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${
+                            className={`text-xs px-3 py-1.5 rounded-lg border whitespace-nowrap shrink-0 transition-all ${
                               isTagSelected
                                 ? 'bg-lima text-espresso border-lima font-semibold'
                                 : 'bg-background hover:bg-areia-soft border-border text-espresso'
@@ -374,7 +375,7 @@ export default function Index() {
                           </button>
                         )
                       })}
-                    </div>
+                    </DragScrollRow>
                   </div>
                 ))}
               </div>
@@ -423,7 +424,7 @@ export default function Index() {
       {/* ============ MANIFESTO ============ */}
       <section className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-4">
         <div className="bg-espresso rounded-3xl px-6 py-10 sm:px-12 sm:py-12 text-center">
-          <RodelaMark className="w-10 h-10 mx-auto mb-5" arc="var(--creme)" dot="var(--tomate)" />
+          <RodelaMark className="w-10 h-10 mx-auto mb-5" arc="var(--creme)" />
           <p className="font-display text-creme text-lg sm:text-2xl leading-relaxed">
             Toda receita começou na cozinha de alguém.
           </p>

@@ -93,16 +93,41 @@ export default function Register() {
       })
       navigate('/minha-cozinha')
     } catch (err: any) {
-      const fieldMsg = err?.response?.data?.message || err?.message || ''
-      let description =
-        'Não conseguimos criar sua conta. Confira os dados e tente de novo — talvez o e-mail ou o apelido já estejam em uso.'
-      if (/username/i.test(fieldMsg)) {
-        description = 'Esse apelido já foi escolhido por outra pessoa. Tente um diferente.'
-      } else if (/email/i.test(fieldMsg)) {
-        description = 'Esse e-mail já tem conta aqui. É só entrar com ele.'
+      // O PocketBase devolve { code:400, response: { data: { campo: { code, message } } } }
+      const responseData = err?.response?.data || {}
+      const fieldData = (responseData.data || {}) as Record<
+        string,
+        { code?: string; message?: string }
+      >
+      const fieldNames = Object.keys(fieldData)
+
+      let title = 'Quase lá'
+      let description = 'Não conseguimos criar sua conta. Confira os dados e tente de novo.'
+
+      const hasEmailConflict = fieldNames.includes('email')
+      const hasUsernameConflict = fieldNames.includes('username')
+
+      if (hasEmailConflict) {
+        // Campo único: o próprio PocketBase sinaliza "value already exists"
+        description =
+          'Este e-mail já tem conta aqui. É só entrar com ele em "Entrar" no topo da página.'
+      } else if (hasUsernameConflict) {
+        description = 'Este apelido já foi escolhido por outra pessoa. Tente um diferente.'
+      } else if (fieldNames.length > 0) {
+        title = 'Confira os dados'
+        const humanNames: Record<string, string> = {
+          email: 'e-mail',
+          username: 'apelido',
+          password: 'senha',
+          passwordConfirm: 'confirmação de senha',
+          display_name: 'nome',
+        }
+        const human = fieldNames.map((f) => humanNames[f] || f).join(', ')
+        description = `Dá uma olhada no ${human} — tem algo errado aí.`
       }
+
       toast({
-        title: 'Quase lá',
+        title,
         description,
         variant: 'destructive',
       })

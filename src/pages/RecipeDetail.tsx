@@ -30,7 +30,10 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
+import { Plus } from 'lucide-react'
+import { RodelaMark } from '@/components/brand/RodelaMark'
 
 export default function RecipeDetail() {
   const { username, slug } = useParams<{ username: string; slug: string }>()
@@ -51,6 +54,8 @@ export default function RecipeDetail() {
   const [myCollections, setMyCollections] = useState<RecipeCollection[]>([])
   const [selectedCollectionId, setSelectedCollectionId] = useState<string>('')
   const [savingRecipe, setSavingRecipe] = useState(false)
+  const [newCollectionName, setNewCollectionName] = useState('')
+  const [creatingCollection, setCreatingCollection] = useState(false)
 
   // Load recipe
   useEffect(() => {
@@ -123,6 +128,30 @@ export default function RecipeDetail() {
       setSaveModalOpen(true)
     } catch (_) {
       setSaveModalOpen(true)
+    }
+  }
+
+  // Cria uma coleção nova direto no diálogo de salvar
+  const handleCreateCollectionInline = async () => {
+    if (!newCollectionName.trim()) return
+    setCreatingCollection(true)
+    try {
+      const created = await collectionService.createCollection(newCollectionName.trim(), true)
+      setMyCollections((prev) => [created, ...prev])
+      setSelectedCollectionId(created.id)
+      setNewCollectionName('')
+      toast({
+        title: 'Coleção criada',
+        description: `"${created.name}" já pode receber receitas.`,
+      })
+    } catch (_) {
+      toast({
+        title: 'Erro ao criar coleção',
+        description: 'Tente de novo com outro nome.',
+        variant: 'destructive',
+      })
+    } finally {
+      setCreatingCollection(false)
     }
   }
 
@@ -556,19 +585,53 @@ export default function RecipeDetail() {
 
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-foreground">Coleção (opcional):</label>
-              <select
-                value={selectedCollectionId}
-                onChange={(e) => setSelectedCollectionId(e.target.value)}
-                className="w-full h-10 px-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="">Nenhuma coleção específica (Geral)</option>
-                {myCollections.map((col) => (
-                  <option key={col.id} value={col.id}>
-                    {col.name} {col.is_private ? '(Privada)' : ''}
-                  </option>
-                ))}
-              </select>
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                Escolha uma coleção
+              </label>
+              {myCollections.length === 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  Você ainda não tem coleções — crie a primeira aqui embaixo.
+                </p>
+              ) : (
+                <select
+                  value={selectedCollectionId}
+                  onChange={(e) => setSelectedCollectionId(e.target.value)}
+                  className="w-full h-10 px-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-tomate"
+                >
+                  <option value="">Sem coleção (fica nos "Salvos")</option>
+                  {myCollections.map((col) => (
+                    <option key={col.id} value={col.id}>
+                      {col.name} {col.is_private ? '· só você vê' : ''}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+
+            {/* Criar coleção na hora, sem sair do diálogo */}
+            <div className="pt-2 border-t border-border/60">
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider block mb-2">
+                Ou crie uma nova
+              </label>
+              <div className="flex items-center gap-2">
+                <Input
+                  placeholder="Ex: Almoço de domingo"
+                  value={newCollectionName}
+                  onChange={(e) => setNewCollectionName(e.target.value)}
+                  className="rounded-xl flex-1"
+                  maxLength={100}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCreateCollectionInline}
+                  disabled={creatingCollection || !newCollectionName.trim()}
+                  className="rounded-xl shrink-0 gap-1.5 text-xs"
+                >
+                  <Plus className="w-3.5 h-3.5 text-tomate" />
+                  {creatingCollection ? 'Criando…' : 'Criar'}
+                </Button>
+              </div>
             </div>
           </div>
 

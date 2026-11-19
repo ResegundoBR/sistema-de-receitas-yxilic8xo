@@ -131,6 +131,22 @@
 }
 
 @layer utilities {
+  /* Carrosséis arrastáveis: sem barra de scroll em desktop nem mobile */
+  .scrollbar-none {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Android */
+  }
+
+  /* Cursor de "agarrar" nos carrosséis de chips */
+  .cursor-grabbing {
+    cursor: grabbing;
+  }
+  .cursor-grab {
+    cursor: grab;
+  }
   /* KEEP ALL THE ANIMATIONS CLASSES THAT ARE USED BELOW */
   @keyframes accordion-down {
     from {

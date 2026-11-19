@@ -11,6 +11,7 @@ import Collections from './pages/Collections'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
+import Salvos from './pages/Salvos'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
 
@@ -34,6 +35,7 @@ const App = () => (
           {/* User kitchen & collections */}
           <Route path="/minha-cozinha" element={<MyKitchen />} />
           <Route path="/colecoes" element={<Collections />} />
+          <Route path="/salvos" element={<Salvos />} />
           <Route path="/perfil" element={<Profile />} />
 
           {/* Auth */}
