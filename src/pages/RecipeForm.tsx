@@ -29,6 +29,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
+import { getLicenseLabel } from '@/lib/license'
 
 interface IngredientRow {
   raw_text: string
@@ -442,10 +443,10 @@ export default function RecipeForm() {
                 onChange={(e) => setLicense(e.target.value as RecipeLicense)}
                 className="w-full h-10 px-3 rounded-xl border border-border bg-background text-sm font-medium"
               >
-                <option value="open">Aberta (Variantes Livres)</option>
-                <option value="credit">Com Créditos (Citar Autor)</option>
-                <option value="ask">Sob Consulta (Exige Autorização)</option>
-                <option value="closed">Fechada (Sem Variantes)</option>
+                <option value="open">{getLicenseLabel('open')} (Variantes Livres)</option>
+                <option value="credit">{getLicenseLabel('credit')} (Citar Autor)</option>
+                <option value="ask">{getLicenseLabel('ask')} (Exige Autorização)</option>
+                <option value="closed">{getLicenseLabel('closed')} (Sem Variantes)</option>
               </select>
             </div>
           </div>

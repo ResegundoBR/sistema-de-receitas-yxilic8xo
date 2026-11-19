@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Recipe } from '@/types/recipe'
 import { recipeService } from '@/services/recipeService'
+import { getLicenseLabel } from '@/lib/license'
+import { RodelaMark } from '@/components/brand/RodelaMark'
 import { Clock, Lock, Link as LinkIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
@@ -9,18 +11,12 @@ interface RecipeCardProps {
   showStatusBadge?: boolean
 }
 
-const licenseLabels: Record<string, string> = {
-  open: 'Aberta',
-  credit: 'Crédito',
-  ask: 'Sob Consulta',
-  closed: 'Fechada',
-}
-
 export function RecipeCard({ recipe, showStatusBadge }: RecipeCardProps) {
   const authorName = recipe.expand?.author?.display_name || 'Cozinheiro Anônimo'
   const authorUsername = recipe.expand?.author?.username || 'autor'
   const totalMinutes = (recipe.prep_minutes || 0) + (recipe.cook_minutes || 0)
-  const licenseLabel = licenseLabels[recipe.license] || licenseLabels.open
+  const licenseLabel = getLicenseLabel(recipe.license)
+  const hasCover = Boolean(recipe.cover)
 
   // Link público da receita: /r/:username/:slug
   const recipeLink = `/r/${authorUsername}/${recipe.slug}`
@@ -32,16 +28,22 @@ export function RecipeCard({ recipe, showStatusBadge }: RecipeCardProps) {
     >
       {/* Capa */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-areia-soft">
-        <img
-          src={recipeService.getFileUrl(recipe)}
-          alt={recipe.title}
-          loading="lazy"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-          onError={(e) => {
-            ;(e.target as HTMLImageElement).src =
-              'https://img.usecurling.com/p/800/600?q=recipe,food'
-          }}
-        />
+        {hasCover ? (
+          <img
+            src={recipeService.getFileUrl(recipe)}
+            alt={recipe.title}
+            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+          />
+        ) : (
+          /* Placeholder neutro da marca: creme/areia com o símbolo Rodela em areia torrada */
+          <div
+            aria-hidden="true"
+            className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#F7F2E8] to-[#D9B382]/35"
+          >
+            <RodelaMark className="w-16 h-16 opacity-70" arc="#D9B382" dot="#D9B382" />
+          </div>
+        )}
 
         {/* Selo de visibilidade (só quando não é pública) */}
         {showStatusBadge && recipe.visibility !== 'public' && (
@@ -106,7 +108,10 @@ export function RecipeCard({ recipe, showStatusBadge }: RecipeCardProps) {
               </span>
             ) : null}
           </div>
-          <span className="shrink-0 text-[11px]">{licenseLabel}</span>
+          {/* Licença: badge areia, visualmente separado de tempo/rendimento */}
+          <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-[#D9B382]/25 text-espresso border border-[#D9B382]/50">
+            {licenseLabel}
+          </span>
         </div>
       </div>
     </Link>

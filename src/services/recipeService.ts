@@ -423,16 +423,17 @@ export const recipeService = {
     return updated
   },
 
-  // Helper to format file URL
+  // Helper to format file URL. Sem capa devolve '' — quem chama decide
+  // entre renderizar <img> ou o placeholder neutro da marca (RodelaMark).
   getFileUrl(recipe: Recipe, filename?: string): string {
     const file = filename || recipe.cover
-    if (!file) return 'https://img.usecurling.com/p/800/600?q=recipe,delicious'
+    if (!file) return ''
     return pb.files.getURL(recipe, file, { thumb: '400x300' })
   },
 
   getLargeFileUrl(recipe: Recipe, filename?: string): string {
     const file = filename || recipe.cover
-    if (!file) return 'https://img.usecurling.com/p/1200/800?q=food,culinary'
+    if (!file) return ''
     return pb.files.getURL(recipe, file, { thumb: '1200x0' })
   },
 }

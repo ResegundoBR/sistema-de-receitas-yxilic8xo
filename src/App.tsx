@@ -14,6 +14,7 @@ import Profile from './pages/Profile'
 import Salvos from './pages/Salvos'
 import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
+import PublicProfile from './pages/PublicProfile'
 import Layout from './components/Layout'
 
 const App = () => (
@@ -26,7 +27,9 @@ const App = () => (
           <Route path="/" element={<Index />} />
           {/* Explorar: busca e navegação pelo acervo público */}
           <Route path="/explorar" element={<Index />} />
-          {/* Public recipe share route /r/:username/:slug */}
+          {/* Perfil público do autor: /r/:username (1 segmento) */}
+          <Route path="/r/:username" element={<PublicProfile />} />
+          {/* Public recipe share route /r/:username/:slug (2 segmentos) */}
           <Route path="/r/:username/:slug" element={<RecipeDetail />} />
 
           {/* Recipe creation & edition */}

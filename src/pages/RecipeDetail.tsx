@@ -34,6 +34,7 @@ import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
 import { Plus } from 'lucide-react'
 import { RodelaMark } from '@/components/brand/RodelaMark'
+import { getLicenseLabel, getLicenseDescription } from '@/lib/license'
 
 export default function RecipeDetail() {
   const { username, slug } = useParams<{ username: string; slug: string }>()
@@ -241,26 +242,8 @@ export default function RecipeDetail() {
   const authorName = author?.display_name || username || 'Autor'
   const totalMinutes = (recipe.prep_minutes || 0) + (recipe.cook_minutes || 0)
 
-  const licenseDescriptions: Record<string, { label: string; desc: string }> = {
-    open: {
-      label: 'Aberta (Open)',
-      desc: 'Qualquer pessoa pode se inspirar e criar novas variantes livres desta receita.',
-    },
-    credit: {
-      label: 'Com Créditos (Credit)',
-      desc: 'Permite criação de variantes desde que o autor original seja citado.',
-    },
-    ask: {
-      label: 'Sob Autorização (Ask)',
-      desc: 'Criação de variantes requer consulta ao autor original.',
-    },
-    closed: {
-      label: 'Fechada (Closed)',
-      desc: 'Receita autoral protegida: não permite variantes derivadas.',
-    },
-  }
-
-  const licenseInfo = licenseDescriptions[recipe.license] || licenseDescriptions.open
+  const licenseLabel = getLicenseLabel(recipe.license)
+  const licenseDesc = getLicenseDescription(recipe.license)
 
   return (
     <div className="min-h-screen bg-background pb-16">
@@ -278,15 +261,21 @@ export default function RecipeDetail() {
       <article className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* Cover Image */}
         <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden bg-muted shadow-md mt-4 border border-border/80">
-          <img
-            src={recipeService.getLargeFileUrl(recipe)}
-            alt={recipe.title}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              ;(e.target as HTMLImageElement).src =
-                'https://img.usecurling.com/p/1200/800?q=food,culinary'
-            }}
-          />
+          {recipe.cover ? (
+            <img
+              src={recipeService.getLargeFileUrl(recipe)}
+              alt={recipe.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            /* Placeholder neutro da marca: creme/areia com o símbolo Rodela em areia torrada */
+            <div
+              aria-hidden="true"
+              className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#F7F2E8] to-[#D9B382]/35"
+            >
+              <RodelaMark className="w-20 h-20 opacity-70" arc="#D9B382" dot="#D9B382" />
+            </div>
+          )}
 
           {/* Visibility badge if not public */}
           {recipe.visibility !== 'public' && (
@@ -436,8 +425,15 @@ export default function RecipeDetail() {
               </span>
             </div>
           </div>
-        </div>
 
+          {/* Licença: badge areia destacado, separado do bloco de tempo/rendimento */}
+          <div className="mb-2">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide px-3 py-1 rounded-full bg-[#D9B382]/25 text-espresso border border-[#D9B382]/50">
+              <FileText className="w-3 h-3 text-espresso/70" />
+              Licença {licenseLabel}
+            </span>
+          </div>
+        </div>
         {/* Story Section if author wrote one */}
         {recipe.story && (
           <section className="mb-10 p-6 bg-muted/40 rounded-2xl border border-border/60">
@@ -577,9 +573,9 @@ export default function RecipeDetail() {
               <FileText className="w-4 h-4 text-primary shrink-0 mt-0.5" />
               <div>
                 <span className="font-semibold text-foreground block mb-0.5">
-                  Licença da Receita: {licenseInfo.label}
+                  Licença da Receita: {licenseLabel}
                 </span>
-                <span>{licenseInfo.desc}</span>
+                <span>{licenseDesc}</span>
               </div>
             </div>
           </div>

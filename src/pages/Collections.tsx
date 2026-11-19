@@ -17,6 +17,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { useToast } from '@/hooks/use-toast'
+import { RodelaMark } from '@/components/brand/RodelaMark'
 
 export default function Collections() {
   const navigate = useNavigate()
@@ -197,11 +198,21 @@ export default function Collections() {
                 className="overflow-hidden rounded-2xl border-border flex flex-col justify-between group"
               >
                 <div className="relative aspect-[16/9] bg-muted overflow-hidden">
-                  <img
-                    src={recipeService.getFileUrl(recipe)}
-                    alt={recipe.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  {recipe.cover ? (
+                    <img
+                      src={recipeService.getFileUrl(recipe)}
+                      alt={recipe.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    /* Placeholder neutro da marca: creme/areia com o símbolo Rodela em areia torrada */
+                    <div
+                      aria-hidden="true"
+                      className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#F7F2E8] to-[#D9B382]/35"
+                    >
+                      <RodelaMark className="w-14 h-14 opacity-70" arc="#D9B382" dot="#D9B382" />
+                    </div>
+                  )}
                   {item.expand?.collection && (
                     <Badge className="absolute top-2 left-2 bg-black/60 text-white text-[10px] border-none backdrop-blur-md">
                       {item.expand.collection.name}

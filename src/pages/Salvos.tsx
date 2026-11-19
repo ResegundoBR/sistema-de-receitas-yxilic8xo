@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/dialog'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
+import { RodelaMark } from '@/components/brand/RodelaMark'
 
 export default function Salvos() {
   const { toast } = useToast()
@@ -217,12 +218,26 @@ export default function Salvos() {
                   >
                     <Link to={`/r/${authorUsername}/${recipe.slug}`} className="block">
                       <div className="aspect-[16/9] bg-muted overflow-hidden">
-                        <img
-                          src={recipeService.getFileUrl(recipe)}
-                          alt={recipe.title}
-                          loading="lazy"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
+                        {recipe.cover ? (
+                          <img
+                            src={recipeService.getFileUrl(recipe)}
+                            alt={recipe.title}
+                            loading="lazy"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          /* Placeholder neutro da marca: creme/areia com o símbolo Rodela em areia torrada */
+                          <div
+                            aria-hidden="true"
+                            className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#F7F2E8] to-[#D9B382]/35"
+                          >
+                            <RodelaMark
+                              className="w-14 h-14 opacity-70"
+                              arc="#D9B382"
+                              dot="#D9B382"
+                            />
+                          </div>
+                        )}
                       </div>
                     </Link>
                     <div className="p-4 flex-1 flex flex-col justify-between gap-3">

@@ -175,18 +175,18 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       {/* ============ HERO DE CONVERSÃO ============ */}
       <section className="relative overflow-hidden bg-creme border-b border-border/60">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 pb-10 sm:pt-8 sm:pb-14 text-center">
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-espresso leading-[1.05] tracking-tight mb-4">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-3 pb-8 sm:pt-4 sm:pb-10 text-center">
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-espresso leading-[1.05] tracking-tight mb-3">
             Receita de
             <br />
             gente de verdade.
           </h1>
-          <p className="text-base sm:text-lg text-espresso-soft max-w-xl mx-auto mb-8 leading-relaxed">
+          <p className="text-base sm:text-lg text-espresso-soft max-w-xl mx-auto mb-6 leading-relaxed">
             Cadastre a sua, veja a dos outros, faça do seu jeito.
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-7">
             {currentUser ? (
               <Button
                 asChild
@@ -266,7 +266,7 @@ export default function Index() {
           </form>
 
           {/* Categorias + filtro por tags — logo abaixo da busca */}
-          <div className="mt-6 mb-2 text-left">
+          <div className="mt-5 mb-2 text-left">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                 <Layers className="w-4 h-4 text-tomate" />

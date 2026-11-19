@@ -129,7 +129,7 @@ export default function Profile() {
               className="rounded-xl bg-muted/60 text-muted-foreground font-mono text-sm"
             />
             <p className="text-[11px] text-muted-foreground">
-              Seu nome de usuário faz parte permanente dos links /r/{currentUser.username}/[slug].
+              Seu apelido faz parte do link das suas receitas e não pode ser alterado.
             </p>
           </div>
 

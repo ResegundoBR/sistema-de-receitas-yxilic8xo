@@ -1,26 +1,29 @@
-import { ReactNode } from 'react'
 import { useDragScroll } from '@/hooks/use-drag-scroll'
 
-/**
- * Linha horizontal arrastável (drag com inércia, sem scrollbar).
- * Cada instância do componente tem o seu próprio hook — isolado no contêiner
- * que ele controla. Usada nas categorias e nas linhas de tags da home.
- */
-export function DragScrollRow({
-  children,
-  className = '',
-}: {
-  children: ReactNode
+interface DragScrollRowProps {
+  children: React.ReactNode
   className?: string
-}) {
-  const drag = useDragScroll<HTMLDivElement>()
+}
+
+/**
+ * Fileira rolável na horizontal (drag com mouse, scroll nativo no toque).
+ * Um véu de gradiente creme→transparente cobre a borda direita, indicando
+ * que a lista continua (o último chip aparece "sumindo" no fade).
+ * O véu não captura cliques (pointer-events-none) e mantém o gap dos chips.
+ */
+export function DragScrollRow({ children, className = '' }: DragScrollRowProps) {
+  const { ref } = useDragScroll<HTMLDivElement>()
 
   return (
-    <div
-      ref={drag.ref}
-      className={`flex items-center gap-2 overflow-x-auto scrollbar-none cursor-grab pb-1 -mx-1 px-1 ${className}`}
-    >
-      {children}
+    <div className={`relative ${className}`}>
+      <div ref={ref} className="flex gap-2 overflow-x-auto scrollbar-hide">
+        {children}
+      </div>
+      {/* Fade creme na borda direita: sinaliza que dá para rolar */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 right-0 w-14 bg-gradient-to-l from-[#F7F2E8] via-[#F7F2E8]/70 to-transparent"
+      />
     </div>
   )
 }
