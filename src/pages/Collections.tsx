@@ -122,7 +122,7 @@ export default function Collections() {
 
         <Button
           onClick={() => setNewColOpen(true)}
-          className="rounded-full bg-primary hover:bg-primary/90 text-white font-semibold shadow-md shadow-orange-500/20 gap-2 self-start sm:self-center"
+          className="rounded-full bg-primary hover:bg-primary/90 text-white font-semibold gap-2 self-start sm:self-center"
         >
           <Plus className="w-4 h-4" />
           Nova Coleção

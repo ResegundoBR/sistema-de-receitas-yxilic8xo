@@ -103,11 +103,11 @@ export default function MyKitchen() {
 
         <Button
           asChild
-          className="rounded-full bg-primary hover:bg-primary/90 text-white font-semibold shadow-md shadow-orange-500/20 gap-2 self-start sm:self-center"
+          className="rounded-full bg-primary hover:bg-primary/90 text-white font-semibold gap-2 self-start sm:self-center"
         >
           <Link to="/receitas/nova">
             <PlusCircle className="w-4 h-4" />
-            Nova Receita
+            Cortar a minha rodela
           </Link>
         </Button>
       </div>
@@ -138,7 +138,7 @@ export default function MyKitchen() {
           onClick={() => setActiveTab('draft')}
           className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
             activeTab === 'draft'
-              ? 'bg-amber-600 text-white shadow-sm'
+              ? 'bg-foreground text-background'
               : 'bg-card border border-border text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -167,11 +167,8 @@ export default function MyKitchen() {
         <div className="text-center py-16 px-4 bg-card rounded-2xl border border-dashed border-border/80">
           <ChefHat className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-40" />
           <h3 className="font-serif-recipe font-bold text-lg text-foreground mb-1">
-            Nenhuma receita nesta categoria
+            Nada aqui. Comece pela receita que você faz de olhos fechados.
           </h3>
-          <p className="text-xs text-muted-foreground mb-4">
-            Comece cadastrando sua primeira receita ou mude a aba de filtro.
-          </p>
           <Button asChild size="sm" className="rounded-xl">
             <Link to="/receitas/nova">Criar Receita Agora</Link>
           </Button>
@@ -203,10 +200,10 @@ export default function MyKitchen() {
                       variant="outline"
                       className={`text-[10px] font-semibold border backdrop-blur-md shadow-sm ${
                         recipe.status === 'published'
-                          ? 'bg-emerald-500/90 text-white border-none'
+                          ? 'bg-[#C9F24D] text-[#12100E] border-none'
                           : recipe.status === 'draft'
-                            ? 'bg-amber-500/90 text-white border-none'
-                            : 'bg-stone-600/90 text-white border-none'
+                            ? 'bg-foreground text-background border-none'
+                            : 'bg-foreground text-background border-none'
                       }`}
                     >
                       {recipe.status === 'published'
@@ -258,8 +255,8 @@ export default function MyKitchen() {
                       onClick={() => handleArchive(recipe)}
                       className={`text-xs gap-1 rounded-lg ${
                         recipe.status === 'archived'
-                          ? 'text-emerald-600 hover:text-emerald-700'
-                          : 'text-stone-600 hover:text-stone-700'
+                          ? 'text-primary hover:text-primary/80'
+                          : 'text-muted-foreground hover:text-foreground'
                       }`}
                       title={
                         recipe.status === 'archived'

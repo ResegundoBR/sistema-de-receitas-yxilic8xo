@@ -1,7 +1,7 @@
 /* Rodela — estilos globais (marca oficial) */
 
 /* Tipografia da marca: Archivo Black (títulos) + Inter (corpo, números tabulares) */
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -107,16 +107,20 @@
       'cv05' 1; /* números tabulares */
   }
 
-  /* Títulos da marca: Archivo Black, sem serifa, sem gradiente, sem sombra */
+  /* Títulos da marca: Archivo Black (com Space Grotesk como apoio), sem serifa, sem gradiente, sem sombra */
   .font-serif-recipe {
-    font-family: 'Archivo Black', 'Inter', system-ui, sans-serif;
+    font-family: 'Archivo Black', 'Space Grotesk', 'Inter', system-ui, sans-serif;
     font-weight: 400;
     letter-spacing: -0.01em;
   }
 
   .font-display {
-    font-family: 'Archivo Black', 'Inter', system-ui, sans-serif;
+    font-family: 'Archivo Black', 'Space Grotesk', 'Inter', system-ui, sans-serif;
     font-weight: 400;
+  }
+
+  .font-accent {
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   }
 
   /* NEVER REMOVE THIS */

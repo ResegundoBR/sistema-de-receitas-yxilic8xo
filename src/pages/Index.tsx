@@ -194,7 +194,7 @@ export default function Index() {
                 className="w-full sm:w-auto bg-tomate hover:bg-tomate/90 text-creme font-semibold rounded-full px-8 py-6 text-base gap-2"
               >
                 <Link to="/minha-cozinha">
-                  Minha cozinha
+                  Cortar a minha rodela
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>
@@ -261,7 +261,7 @@ export default function Index() {
               </div>
             </div>
             <p className="text-[11px] text-muted-foreground mt-2">
-              Achamos a receita mesmo se você digitar sem acento.
+              Acha a receita mesmo digitando errado.
             </p>
           </form>
         </div>
@@ -538,7 +538,7 @@ export default function Index() {
                   Nada por aqui com esses filtros
                 </h3>
                 <p className="text-sm text-muted-foreground max-w-md mx-auto mb-5">
-                  Tente buscar sem acento (ex.: "pao" acha "Pão") ou remova alguma tag.
+                  Tente digitar de outro jeito ou remova algum filtro.
                 </p>
                 <Button
                   onClick={handleClearAllFilters}

@@ -95,7 +95,7 @@ export default function Profile() {
         <form onSubmit={handleSave} className="space-y-5">
           {/* Avatar */}
           <div className="flex items-center gap-4 p-3.5 bg-muted/30 rounded-2xl">
-            <div className="w-16 h-16 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center text-orange-700 font-bold shrink-0 border">
+            <div className="w-16 h-16 rounded-full overflow-hidden bg-muted flex items-center justify-center text-foreground font-bold shrink-0 border">
               {avatarPreview ? (
                 <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
@@ -121,9 +121,7 @@ export default function Profile() {
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-foreground uppercase tracking-wider flex items-center justify-between">
               <span>Nome de Usuário</span>
-              <span className="text-[10px] text-amber-600 dark:text-amber-400 font-normal">
-                Imutável
-              </span>
+              <span className="text-[10px] text-muted-foreground font-normal">Imutável</span>
             </label>
             <Input
               disabled

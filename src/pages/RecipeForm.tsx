@@ -232,7 +232,7 @@ export default function RecipeForm() {
       })
 
       toast({
-        title: 'Receita criada com sucesso!',
+        title: 'No ar. Copie o link e mande pra alguém.',
         description: 'Sua receita foi salva no acervo.',
       })
 
@@ -273,7 +273,7 @@ export default function RecipeForm() {
         {/* Card 1: Informações Gerais */}
         <Card className="p-6 rounded-2xl border-border space-y-6">
           <h2 className="font-serif-recipe font-bold text-xl text-foreground flex items-center gap-2">
-            <ChefHat className="w-5 h-5 text-orange-600" />
+            <ChefHat className="w-5 h-5 text-primary" />
             1. Informações Básicas
           </h2>
 
@@ -323,7 +323,7 @@ export default function RecipeForm() {
               Foto de Capa (JPG, PNG ou WebP até 8MB)
             </label>
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              <label className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-orange-300 hover:border-orange-500 bg-orange-50/50 dark:bg-orange-950/20 text-orange-800 dark:text-orange-200 text-sm font-medium transition-colors">
+              <label className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-border hover:border-primary bg-muted/40 text-foreground text-sm font-medium transition-colors">
                 <Upload className="w-4 h-4 text-primary" />
                 <span>Escolher Imagem</span>
                 <input
@@ -455,7 +455,7 @@ export default function RecipeForm() {
         <Card className="p-6 rounded-2xl border-border space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-serif-recipe font-bold text-xl text-foreground flex items-center gap-2">
-              <Scale className="w-5 h-5 text-orange-600" />
+              <Scale className="w-5 h-5 text-primary" />
               2. Ingredientes Estruturados
             </h2>
             <Button
@@ -542,7 +542,7 @@ export default function RecipeForm() {
         <Card className="p-6 rounded-2xl border-border space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-serif-recipe font-bold text-xl text-foreground flex items-center gap-2">
-              <Clock className="w-5 h-5 text-orange-600" />
+              <Clock className="w-5 h-5 text-primary" />
               3. Modo de Preparo (Etapas)
             </h2>
             <Button
@@ -561,7 +561,7 @@ export default function RecipeForm() {
             {steps.map((st, idx) => (
               <div key={idx} className="p-3 bg-muted/40 rounded-xl space-y-2">
                 <div className="flex items-start gap-2">
-                  <div className="w-6 h-6 rounded-full bg-orange-600 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-2">
+                  <div className="w-6 h-6 rounded-full bg-primary text-white font-bold text-xs flex items-center justify-center shrink-0 mt-2">
                     {idx + 1}
                   </div>
                   <Textarea
@@ -623,7 +623,7 @@ export default function RecipeForm() {
         {/* Card 4: Tags e Visibilidade */}
         <Card className="p-6 rounded-2xl border-border space-y-4">
           <h2 className="font-serif-recipe font-bold text-xl text-foreground flex items-center gap-2">
-            <Layers className="w-5 h-5 text-orange-600" />
+            <Layers className="w-5 h-5 text-primary" />
             4. Tags & Publicação
           </h2>
 
@@ -641,8 +641,8 @@ export default function RecipeForm() {
                     onClick={() => toggleTag(tag.id)}
                     className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${
                       isSelected
-                        ? 'bg-amber-600 text-white border-amber-600 font-semibold shadow-sm'
-                        : 'bg-background hover:bg-orange-50 border-border text-foreground'
+                        ? 'bg-[#C9F24D] text-[#12100E] border-[#C9F24D] font-semibold'
+                        : 'bg-background hover:bg-muted border-border text-foreground'
                     }`}
                   >
                     #{tag.name}
@@ -698,7 +698,7 @@ export default function RecipeForm() {
           <Button
             type="submit"
             disabled={submitting}
-            className="rounded-xl px-8 bg-primary hover:bg-primary/90 text-white font-semibold shadow-md shadow-orange-500/20"
+            className="rounded-xl px-8 bg-primary hover:bg-primary/90 text-white font-semibold"
           >
             {submitting ? 'Salvando Receita...' : 'Salvar Receita'}
           </Button>

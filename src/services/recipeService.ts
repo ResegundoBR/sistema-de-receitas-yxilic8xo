@@ -7,6 +7,7 @@ import {
   RecipeIngredient,
   RecipeStep,
   RecipeCollection,
+  RecipeStatus,
   SavedRecipe,
 } from '@/types/recipe'
 import { normalizeSearchText, slugify } from '@/lib/normalize'
