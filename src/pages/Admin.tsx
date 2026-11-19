@@ -86,7 +86,10 @@ export default function Admin() {
       .finally(() => setLoading(false))
   }, [isAdmin, navigate, toast])
 
-  const existingList = tab === 'categorias' ? categories : tags
+  const existingList: Array<{ id: string; name: string; slug: string }> =
+    tab === 'categorias'
+      ? categories.map((c) => ({ id: c.id, name: c.name, slug: c.slug }))
+      : tags.map((t) => ({ id: t.id, name: t.name, slug: t.slug }))
 
   // Sugestões em tempo real enquanto digita (normalização: minúsculo, sem acento, sem pontuação)
   const similar = useMemo(
@@ -97,7 +100,7 @@ export default function Admin() {
     () =>
       existingList.some(
         (item) =>
-          (!editingId || (item as unknown as { id: string }).id !== editingId) &&
+          (!editingId || item.id !== editingId) &&
           item.name.trim().toLowerCase() === name.trim().toLowerCase(),
       ),
     [existingList, name, editingId],

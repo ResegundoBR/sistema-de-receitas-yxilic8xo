@@ -70,7 +70,11 @@ onRecordUpdateRequest((e) => {
   e.next()
 }, 'recipes')
 
-// 2. Recipe Tags hooks to maintain tag_index in recipes
+// 2. Recipe Tags hooks to maintain tag_index in recipes.
+// IMPORTANTE: o JSVM do PocketBase executa cada callback em um pool separado —
+// funções/variáveis de topo NÃO são visíveis dentro dos callbacks. Toda a
+// lógica é DUPLICADA inline em cada callback (sem função de topo).
+
 onRecordAfterCreateSuccess((e) => {
   const recipeId = e.record.getString('recipe')
   if (recipeId) {

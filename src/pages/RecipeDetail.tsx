@@ -56,6 +56,8 @@ export default function RecipeDetail() {
   const [savingRecipe, setSavingRecipe] = useState(false)
   const [newCollectionName, setNewCollectionName] = useState('')
   const [creatingCollection, setCreatingCollection] = useState(false)
+  // Contador de salvamentos (espelha recipes.save_count; reconciliado por hook)
+  const [saveCount, setSaveCount] = useState(0)
 
   // Load recipe
   useEffect(() => {
@@ -66,6 +68,7 @@ export default function RecipeDetail() {
       try {
         const data = await recipeService.getByUsernameAndSlug(username, slug)
         setRecipe(data.recipe)
+        setSaveCount(data.recipe.save_count || 0)
         setIngredients(data.ingredients)
         setSteps(data.steps)
         setTags(data.tags)
@@ -107,6 +110,7 @@ export default function RecipeDetail() {
         await collectionService.removeSavedRecipe(savedRecordId)
         setIsSaved(false)
         setSavedRecordId(null)
+        setSaveCount((c) => Math.max(0, c - 1))
         toast({
           title: 'Removida dos salvos',
           description: 'A receita foi retirada da sua coleção.',
@@ -162,6 +166,7 @@ export default function RecipeDetail() {
       const rec = await collectionService.saveRecipe(recipe.id, selectedCollectionId || undefined)
       setIsSaved(true)
       setSavedRecordId(rec.id)
+      setSaveCount((c) => c + 1)
       setSaveModalOpen(false)
       toast({
         title: 'Receita salva com sucesso!',
@@ -321,6 +326,15 @@ export default function RecipeDetail() {
               >
                 {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
                 {isSaved ? 'Salva' : 'Salvar'}
+                {saveCount > 0 && (
+                  <span
+                    className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold tabular-nums ${
+                      isSaved ? 'bg-white/20 text-white' : 'bg-[#C9F24D] text-[#12100E]'
+                    }`}
+                  >
+                    {saveCount}
+                  </span>
+                )}
               </Button>
 
               <Button
