@@ -29,19 +29,14 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate"
-          ]
+          "autodateTriggers": ["onCreate"]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate",
-            "onUpdate"
-          ]
+          "autodateTriggers": ["onCreate", "onUpdate"]
         },
         {
           "name": "display_name",
@@ -72,11 +67,7 @@
           "type": "select",
           "required": false,
           "system": false,
-          "selectValues": [
-            "user",
-            "creator",
-            "admin"
-          ]
+          "selectValues": ["user", "creator", "admin"]
         }
       ],
       "indexes": [
@@ -130,19 +121,14 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate"
-          ]
+          "autodateTriggers": ["onCreate"]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate",
-            "onUpdate"
-          ]
+          "autodateTriggers": ["onCreate", "onUpdate"]
         },
         {
           "name": "parent",
@@ -152,9 +138,7 @@
           "collectionRef": "categories"
         }
       ],
-      "indexes": [
-        "CREATE UNIQUE INDEX idx_categories_slug ON categories (slug)"
-      ]
+      "indexes": ["CREATE UNIQUE INDEX idx_categories_slug ON categories (slug)"]
     },
     {
       "name": "tags",
@@ -200,19 +184,14 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate"
-          ]
+          "autodateTriggers": ["onCreate"]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate",
-            "onUpdate"
-          ]
+          "autodateTriggers": ["onCreate", "onUpdate"]
         }
       ],
       "indexes": [
@@ -266,24 +245,17 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate"
-          ]
+          "autodateTriggers": ["onCreate"]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate",
-            "onUpdate"
-          ]
+          "autodateTriggers": ["onCreate", "onUpdate"]
         }
       ],
-      "indexes": [
-        "CREATE UNIQUE INDEX idx_ingredients_slug ON ingredients (slug)"
-      ]
+      "indexes": ["CREATE UNIQUE INDEX idx_ingredients_slug ON ingredients (slug)"]
     },
     {
       "name": "recipes",
@@ -351,12 +323,7 @@
           "type": "select",
           "required": false,
           "system": false,
-          "selectValues": [
-            "porcoes",
-            "unidades",
-            "g",
-            "ml"
-          ]
+          "selectValues": ["porcoes", "unidades", "g", "ml"]
         },
         {
           "name": "prep_minutes",
@@ -381,12 +348,7 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": [
-            "open",
-            "credit",
-            "ask",
-            "closed"
-          ]
+          "selectValues": ["open", "credit", "ask", "closed"]
         },
         {
           "name": "variant_note",
@@ -405,22 +367,14 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": [
-            "draft",
-            "published",
-            "archived"
-          ]
+          "selectValues": ["draft", "published", "archived"]
         },
         {
           "name": "visibility",
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": [
-            "public",
-            "unlisted",
-            "private"
-          ]
+          "selectValues": ["public", "unlisted", "private"]
         },
         {
           "name": "cooksnap_count",
@@ -463,19 +417,14 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate"
-          ]
+          "autodateTriggers": ["onCreate"]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate",
-            "onUpdate"
-          ]
+          "autodateTriggers": ["onCreate", "onUpdate"]
         },
         {
           "name": "parent_recipe",
@@ -571,19 +520,14 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate"
-          ]
+          "autodateTriggers": ["onCreate"]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate",
-            "onUpdate"
-          ]
+          "autodateTriggers": ["onCreate", "onUpdate"]
         }
       ],
       "indexes": [
@@ -655,24 +599,17 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate"
-          ]
+          "autodateTriggers": ["onCreate"]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate",
-            "onUpdate"
-          ]
+          "autodateTriggers": ["onCreate", "onUpdate"]
         }
       ],
-      "indexes": [
-        "CREATE INDEX idx_recipe_steps_recipe ON recipe_steps (recipe, position)"
-      ]
+      "indexes": ["CREATE INDEX idx_recipe_steps_recipe ON recipe_steps (recipe, position)"]
     },
     {
       "name": "recipe_tags",
@@ -704,24 +641,17 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate"
-          ]
+          "autodateTriggers": ["onCreate"]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate",
-            "onUpdate"
-          ]
+          "autodateTriggers": ["onCreate", "onUpdate"]
         }
       ],
-      "indexes": [
-        "CREATE UNIQUE INDEX idx_recipe_tags_unique ON recipe_tags (recipe, tag)"
-      ]
+      "indexes": ["CREATE UNIQUE INDEX idx_recipe_tags_unique ON recipe_tags (recipe, tag)"]
     },
     {
       "name": "collections",
@@ -758,24 +688,17 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate"
-          ]
+          "autodateTriggers": ["onCreate"]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate",
-            "onUpdate"
-          ]
+          "autodateTriggers": ["onCreate", "onUpdate"]
         }
       ],
-      "indexes": [
-        "CREATE INDEX idx_collections_owner ON collections (owner)"
-      ]
+      "indexes": ["CREATE INDEX idx_collections_owner ON collections (owner)"]
     },
     {
       "name": "saved_recipes",
@@ -814,19 +737,14 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate"
-          ]
+          "autodateTriggers": ["onCreate"]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": [
-            "onCreate",
-            "onUpdate"
-          ]
+          "autodateTriggers": ["onCreate", "onUpdate"]
         }
       ],
       "indexes": [
