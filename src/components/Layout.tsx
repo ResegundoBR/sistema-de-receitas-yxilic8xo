@@ -52,6 +52,11 @@ export default function Layout() {
       <NavLink to="/salvos" className={navLinkClass}>
         Salvos
       </NavLink>
+      {user?.role === 'admin' && (
+        <NavLink to="/admin" className={navLinkClass}>
+          Admin
+        </NavLink>
+      )}
       <button
         onClick={() => setSearchOpen((v) => !v)}
         className="text-sm font-semibold text-espresso hover:text-tomate transition-colors"

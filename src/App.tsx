@@ -12,6 +12,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
 import Salvos from './pages/Salvos'
+import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
 
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/colecoes" element={<Collections />} />
           <Route path="/salvos" element={<Salvos />} />
           <Route path="/perfil" element={<Profile />} />
+          <Route path="/admin" element={<Admin />} />
 
           {/* Auth */}
           <Route path="/login" element={<Login />} />

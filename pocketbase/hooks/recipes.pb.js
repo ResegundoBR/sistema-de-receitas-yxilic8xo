@@ -141,22 +141,5 @@ onRecordAfterDeleteSuccess((e) => {
   e.next()
 }, 'recipe_tags')
 
-// 3. Cron job every 30 minutes to reconcile counts
-cronAdd('reconcile_recipe_counts', '*/30 * * * *', () => {
-  try {
-    const allRecipes = $app.findRecordsByFilter('recipes', 'status != ""', '', 500, 0)
-    for (let i = 0; i < allRecipes.length; i++) {
-      const rec = allRecipes[i]
-      const ingCount = $app.countRecords('recipe_ingredients', 'recipe = "' + rec.id + '"')
-      const varCount = $app.countRecords('recipes', 'parent_recipe = "' + rec.id + '"')
-      const saveCount = $app.countRecords('saved_recipes', 'recipe = "' + rec.id + '"')
-
-      rec.set('ingredient_count', ingCount)
-      rec.set('variant_count', varCount)
-      rec.set('save_count', saveCount)
-      $app.save(rec)
-    }
-  } catch (err) {
-    console.error('Cron reconcile_recipe_counts error:', err)
-  }
-})
+// (Reconciliação de contagens — cron e eventos de salvar/remover —
+//  vive agora em saved_recipes.pb.js, por contagem real no banco.)

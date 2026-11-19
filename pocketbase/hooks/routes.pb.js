@@ -39,9 +39,12 @@ routerAdd('GET', '/r/{username}/{slug}', (e) => {
     'Receita de gente de verdade: veja o passo a passo completo no Rodela.'
   const coverFile = recipe.getString('cover')
 
+  // WhatsApp e demais redes exigem URL ABSOLUTA no og:image.
+  const PUBLIC_BASE_URL = 'https://sistema-de-receitas-6b58a.goskip.app'
   let imageUrl = 'https://img.usecurling.com/p/1200/630?q=recipe,food'
   if (coverFile) {
-    imageUrl = '/api/files/' + recipe.collection().id + '/' + recipe.id + '/' + coverFile
+    imageUrl =
+      PUBLIC_BASE_URL + '/api/files/' + recipe.collection().id + '/' + recipe.id + '/' + coverFile
   }
 
   const currentUrl = e.request.url.string()

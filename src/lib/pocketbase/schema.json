@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-19T21:24:37.383Z",
+  "generatedAt": "2026-11-19T21:37:57.045Z",
   "collections": [
     {
       "name": "users",
@@ -68,11 +68,18 @@
           "required": false,
           "system": false,
           "selectValues": ["user", "creator", "admin"]
+        },
+        {
+          "name": "username",
+          "type": "text",
+          "required": true,
+          "system": false
         }
       ],
       "indexes": [
         "CREATE UNIQUE INDEX `idx_tokenKey__pb_users_auth_` ON `users` (`tokenKey`)",
-        "CREATE UNIQUE INDEX `idx_email__pb_users_auth_` ON `users` (`email`) WHERE `email` != ''"
+        "CREATE UNIQUE INDEX `idx_email__pb_users_auth_` ON `users` (`email`) WHERE `email` != ''",
+        "CREATE UNIQUE INDEX `idx_users_username` ON `users` (username)"
       ]
     },
     {
@@ -81,9 +88,9 @@
       "apiRules": {
         "list": "",
         "view": "",
-        "create": null,
-        "update": null,
-        "delete": null
+        "create": "@request.auth.role = \"admin\"",
+        "update": "@request.auth.role = \"admin\"",
+        "delete": "@request.auth.role = \"admin\""
       },
       "fields": [
         {
@@ -146,9 +153,9 @@
       "apiRules": {
         "list": "",
         "view": "",
-        "create": null,
-        "update": null,
-        "delete": null
+        "create": "@request.auth.role = \"admin\"",
+        "update": "@request.auth.role = \"admin\"",
+        "delete": "@request.auth.role = \"admin\""
       },
       "fields": [
         {
@@ -205,9 +212,9 @@
       "apiRules": {
         "list": "",
         "view": "",
-        "create": null,
-        "update": null,
-        "delete": null
+        "create": "@request.auth.role = \"admin\"",
+        "update": "@request.auth.role = \"admin\"",
+        "delete": "@request.auth.role = \"admin\""
       },
       "fields": [
         {
