@@ -128,8 +128,11 @@ export default function Profile() {
       })
     } catch (err: any) {
       toast({
-        title: 'Erro ao atualizar perfil',
-        description: err.message || 'Tente novamente.',
+        title: 'Não conseguimos salvar suas alterações',
+        description:
+          err?.response?.message ||
+          err?.message ||
+          'Verifique os campos e tente de novo em instantes.',
         variant: 'destructive',
       })
     } finally {

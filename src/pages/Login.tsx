@@ -59,7 +59,7 @@ export default function Login() {
         title: 'Bem-vindo(a) de volta!',
         description: 'Bom te ver por aqui.',
       })
-      navigate('/minha-cozinha')
+      navigate('/explorar')
     } catch (err) {
       toast({
         title: 'Não conseguimos entrar',

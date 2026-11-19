@@ -91,7 +91,7 @@ export default function Register() {
         title: 'Conta criada!',
         description: `Bem-vindo(a) à Rodela, ${displayName.trim()}!`,
       })
-      navigate('/minha-cozinha')
+      navigate('/explorar')
     } catch (err: any) {
       // O PocketBase devolve { code:400, response: { data: { campo: { code, message } } } }
       const responseData = err?.response?.data || {}

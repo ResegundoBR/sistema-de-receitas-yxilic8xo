@@ -5,13 +5,11 @@ import type { User } from '@/types/recipe'
 import { RodelaLogo } from '@/components/brand/RodelaMark'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
-import { Search, Plus, Menu, X, LogOut, User as UserIcon, ChefHat } from 'lucide-react'
+import { Plus, Menu, X, LogOut, User as UserIcon, ChefHat } from 'lucide-react'
 
 export default function Layout() {
   const navigate = useNavigate()
   const { toast } = useToast()
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [search, setSearch] = useState('')
   const [mobileOpen, setMobileOpen] = useState(false)
   const [user, setUser] = useState<User | null>(authService.getCurrentUser())
   const [accountOpen, setAccountOpen] = useState(false)
@@ -42,15 +40,6 @@ export default function Layout() {
     navigate('/')
   }
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    const q = search.trim()
-    if (!q) return
-    navigate(`/explorar?q=${encodeURIComponent(q)}`)
-    setSearchOpen(false)
-    setMobileOpen(false)
-  }
-
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `text-sm font-semibold transition-colors ${
       isActive ? 'text-tomate' : 'text-espresso hover:text-tomate'
@@ -72,12 +61,6 @@ export default function Layout() {
           Admin
         </NavLink>
       )}
-      <button
-        onClick={() => setSearchOpen((v) => !v)}
-        className="text-sm font-semibold text-espresso hover:text-tomate transition-colors"
-      >
-        Buscar
-      </button>
     </>
   )
 
@@ -180,31 +163,6 @@ export default function Layout() {
               </button>
             </div>
           </div>
-
-          {/* Busca desdobrável (desktop e mobile) */}
-          {searchOpen && (
-            <form
-              onSubmit={handleSearch}
-              className="pb-4 pt-1 flex items-center gap-2 border-t border-border/60"
-            >
-              <Search className="w-4 h-4 text-muted-foreground" />
-              <input
-                autoFocus
-                type="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Busque por pão, bolo, moqueca..."
-                className="flex-1 bg-transparent outline-none text-sm text-espresso placeholder:text-muted-foreground"
-              />
-              <Button
-                type="submit"
-                size="sm"
-                className="rounded-full bg-espresso hover:bg-espresso/90 text-creme text-xs font-semibold"
-              >
-                Buscar
-              </Button>
-            </form>
-          )}
 
           {/* Menu mobile */}
           {mobileOpen && (

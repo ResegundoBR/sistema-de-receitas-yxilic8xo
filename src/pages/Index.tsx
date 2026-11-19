@@ -106,18 +106,26 @@ export default function Index() {
     fetchRecipes()
   }, [searchFromUrl, categoryFromUrl, searchParams])
 
-  // Handle Search submit
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const newParams = new URLSearchParams(searchParams)
-    if (searchInput.trim()) {
-      newParams.set('q', searchInput.trim())
-    } else {
-      newParams.delete('q')
-    }
-    setSearchParams(newParams)
-    document.getElementById('receitas')?.scrollIntoView({ behavior: 'smooth' })
-  }
+  // Busca ao vivo: filtra enquanto digita (300ms de espera), sem botão "Buscar"
+  // nem página de resultados — a própria Explorar mostra o que achou.
+  useEffect(() => {
+    const trimmed = searchInput.trim()
+    if (trimmed === searchFromUrl) return
+    const timer = setTimeout(() => {
+      const newParams = new URLSearchParams(searchParams)
+      if (trimmed) {
+        newParams.set('q', trimmed)
+      } else {
+        newParams.delete('q')
+      }
+      setSearchParams(newParams, { replace: true })
+      if (trimmed) {
+        document.getElementById('receitas')?.scrollIntoView({ behavior: 'smooth' })
+      }
+    }, 300)
+    return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInput])
 
   // Toggle Category Filter
   const handleSelectCategory = (catSlug: string) => {
@@ -200,47 +208,36 @@ export default function Index() {
             </div>
           )}
 
-          {/* Busca */}
-          <form onSubmit={handleSearchSubmit} className="relative max-w-xl mx-auto">
-            <div className="relative flex items-center">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
-              <Input
-                type="text"
-                aria-label="Buscar receitas"
-                placeholder="Busque por pão, bolo, moqueca…"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                className="w-full pl-12 pr-24 py-6 rounded-2xl border-areia bg-white text-base focus-visible:ring-tomate"
-              />
-              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
-                {searchInput && (
-                  <button
-                    type="button"
-                    aria-label="Limpar busca"
-                    onClick={() => {
-                      setSearchInput('')
-                      const newParams = new URLSearchParams(searchParams)
-                      newParams.delete('q')
-                      setSearchParams(newParams)
-                    }}
-                    className="p-1.5 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-                <Button
-                  type="submit"
-                  size="sm"
-                  className="rounded-xl px-4 py-2 font-semibold bg-espresso hover:bg-espresso/90 text-creme"
-                >
-                  Buscar
-                </Button>
-              </div>
-            </div>
+          {/* Busca ao vivo — sem botão: filtra enquanto digita */}
+          <div className="relative max-w-xl mx-auto">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+            <Input
+              type="text"
+              aria-label="Buscar receitas"
+              placeholder="Busque por pão, bolo, moqueca…"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="w-full pl-12 pr-11 py-6 rounded-2xl border-areia bg-white text-base focus-visible:ring-tomate"
+            />
+            {searchInput && (
+              <button
+                type="button"
+                aria-label="Limpar busca"
+                onClick={() => {
+                  setSearchInput('')
+                  const newParams = new URLSearchParams(searchParams)
+                  newParams.delete('q')
+                  setSearchParams(newParams)
+                }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
             <p className="text-[11px] text-muted-foreground mt-2">
               Acha a receita mesmo digitando errado.
             </p>
-          </form>
+          </div>
 
           {/* Categorias + filtro por tags — logo abaixo da busca */}
           <div className="mt-5 mb-2 text-left">
@@ -399,20 +396,20 @@ export default function Index() {
       </section>
 
       {/* ============ MANIFESTO ============ */}
-      <section className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-4">
-        <div className="bg-espresso rounded-3xl px-6 py-8 sm:px-12 sm:py-10 text-center flex flex-col items-center">
-          <RodelaMark className="w-10 h-10 mb-4" arc="var(--creme)" />
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 pt-8 pb-4">
+        <div className="bg-espresso rounded-3xl px-6 pt-3.5 pb-5 sm:px-12 sm:pt-4 sm:pb-6 text-center flex flex-col items-center">
+          <RodelaMark className="w-7 h-7 mb-1" arc="var(--creme)" />
           <p className="font-display text-creme text-lg sm:text-2xl leading-relaxed">
             Toda receita começou na cozinha de alguém.
           </p>
-          <p className="text-creme/80 text-sm sm:text-base leading-relaxed mt-2.5 max-w-xl mx-auto">
+          <p className="text-creme/80 text-sm sm:text-base leading-relaxed mt-2 max-w-xl mx-auto">
             Aqui ela tem nome, tem dono e tem história. E se você fizer diferente, isso não é erro —
             é uma rodela da anterior.
           </p>
           {!currentUser && (
             <Button
               asChild
-              className="mt-5 bg-tomate hover:bg-tomate/90 text-creme font-semibold rounded-full px-7 py-4 gap-2"
+              className="mt-4 bg-tomate hover:bg-tomate/90 text-creme font-semibold rounded-full px-7 py-4 gap-2"
             >
               <Link to="/cadastro">
                 Colocar minha receita lá dentro

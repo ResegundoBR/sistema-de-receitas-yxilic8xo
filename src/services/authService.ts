@@ -54,17 +54,24 @@ export const authService = {
       bio?: string
       city?: string
       state?: string
-      avatar?: File
+      avatar?: File | null
     },
   ): Promise<User> {
     const formData = new FormData()
-    if (data.display_name) formData.append('display_name', data.display_name)
+    if (data.display_name !== undefined) formData.append('display_name', data.display_name)
     if (data.bio !== undefined) formData.append('bio', data.bio)
     if (data.city !== undefined) formData.append('city', data.city)
     if (data.state !== undefined) formData.append('state', data.state)
     if (data.avatar) formData.append('avatar', data.avatar)
 
     const updated = await pb.collection('users').update(userId, formData)
+
+    // Sincroniza a sessão com o registro novo: sem isto, o usuário continua
+    // vendo os dados antigos (avatar, nome, cidade) até deslogar.
+    if (pb.authStore.record && pb.authStore.record.id === userId) {
+      pb.authStore.save(updated.token || pb.authStore.token, updated)
+    }
+
     return updated as unknown as User
   },
 
