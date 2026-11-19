@@ -16,6 +16,38 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Esqueci minha senha
+  const [resetOpen, setResetOpen] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetLoading, setResetLoading] = useState(false)
+
+  const handleReset = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!resetEmail.trim()) return
+
+    setResetLoading(true)
+    try {
+      await authService.requestPasswordReset(resetEmail)
+      toast({
+        title: 'E-mail enviado!',
+        description:
+          'Se este e-mail tiver conta, você vai receber as instruções para criar uma nova senha.',
+      })
+      setResetOpen(false)
+      setResetEmail('')
+    } catch (err) {
+      // Mensagem clara em vez de erro genérico (SMTP ausente, e-mail inválido etc.)
+      toast({
+        title: 'Não conseguimos enviar o e-mail',
+        description:
+          'Verifique o endereço digitado e tente de novo. Se o problema continuar, o envio de e-mails pode estar temporariamente indisponível.',
+        variant: 'destructive',
+      })
+    } finally {
+      setResetLoading(false)
+    }
+  }
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!emailOrUsername.trim() || !password) return
@@ -103,6 +135,50 @@ export default function Login() {
             {loading ? 'Entrando…' : 'Entrar'}
             <ArrowRight className="w-4 h-4" />
           </Button>
+
+          <div className="text-center pt-1">
+            <button
+              type="button"
+              onClick={() => setResetOpen((v) => !v)}
+              className="text-sm text-muted-foreground hover:text-tomate transition-colors"
+            >
+              Esqueci minha senha
+            </button>
+          </div>
+
+          {resetOpen && (
+            <form onSubmit={handleReset} className="space-y-2 pt-2 border-t border-border">
+              <label
+                htmlFor="reset-email"
+                className="text-xs font-semibold text-espresso uppercase tracking-wider"
+              >
+                E-mail cadastrado
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  id="reset-email"
+                  required
+                  type="email"
+                  placeholder="seu.email@exemplo.com"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  className="pl-10 rounded-xl"
+                />
+              </div>
+              <Button
+                type="submit"
+                disabled={resetLoading}
+                variant="outline"
+                className="w-full rounded-xl font-semibold"
+              >
+                {resetLoading ? 'Enviando…' : 'Enviar instruções'}
+              </Button>
+              <p className="text-[11px] text-muted-foreground text-center">
+                Você vai receber um e-mail com o passo a passo para criar uma nova senha.
+              </p>
+            </form>
+          )}
         </form>
 
         <div className="mt-6 pt-6 border-t border-border text-center text-sm text-muted-foreground">

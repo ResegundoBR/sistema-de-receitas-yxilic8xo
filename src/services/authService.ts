@@ -68,6 +68,20 @@ export const authService = {
     return updated as unknown as User
   },
 
+  async requestPasswordReset(email: string): Promise<void> {
+    await pb.collection('users').requestPasswordReset(email.trim())
+  },
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    const user = this.getCurrentUser()
+    if (!user) throw new Error('Você precisa estar logado para alterar a senha.')
+    await pb.collection('users').update(user.id, {
+      password: newPassword,
+      passwordConfirm: newPassword,
+      oldPassword: currentPassword,
+    })
+  },
+
   logout(): void {
     pb.authStore.clear()
   },

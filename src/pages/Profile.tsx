@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { authService } from '@/services/authService'
-import { User, Upload, ArrowLeft, Check, ShieldCheck } from 'lucide-react'
+import { User, Upload, ArrowLeft, Check, ShieldCheck, KeyRound } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -21,6 +21,12 @@ export default function Profile() {
   const [avatarPreview, setAvatarPreview] = useState<string>('')
   const [saving, setSaving] = useState(false)
 
+  // Alterar senha
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [savingPassword, setSavingPassword] = useState(false)
+
   useEffect(() => {
     if (!currentUser) {
       navigate('/login')
@@ -33,6 +39,58 @@ export default function Profile() {
     setState(currentUser.state || '')
     setAvatarPreview(authService.getAvatarUrl(currentUser))
   }, [currentUser, navigate])
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!currentUser) return
+
+    if (newPassword.length < 8) {
+      toast({
+        title: 'Senha muito curta',
+        description: 'A nova senha deve ter pelo menos 8 caracteres.',
+        variant: 'destructive',
+      })
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: 'As senhas não conferem',
+        description: 'A confirmação deve ser igual à nova senha.',
+        variant: 'destructive',
+      })
+      return
+    }
+    if (newPassword === currentPassword) {
+      toast({
+        title: 'Escolha uma senha diferente',
+        description: 'A nova senha não pode ser igual à atual.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setSavingPassword(true)
+    try {
+      await authService.changePassword(currentPassword, newPassword)
+      toast({
+        title: 'Senha alterada!',
+        description: 'Use a nova senha no próximo login.',
+      })
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+    } catch (err: any) {
+      toast({
+        title: 'Não conseguimos alterar a senha',
+        description:
+          err?.message ||
+          'Confira a senha atual digitada e tente de novo. A nova senha precisa ter pelo menos 8 caracteres.',
+        variant: 'destructive',
+      })
+    } finally {
+      setSavingPassword(false)
+    }
+  }
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -190,6 +248,77 @@ export default function Profile() {
             >
               {saving ? 'Salvando...' : 'Salvar Alterações'}
               <Check className="w-4 h-4" />
+            </Button>
+          </div>
+        </form>
+      </Card>
+
+      {/* Alterar senha */}
+      <Card className="p-6 sm:p-8 rounded-3xl border-border shadow-md mt-6">
+        <h2 className="font-serif-recipe text-xl sm:text-2xl font-extrabold text-foreground mb-1">
+          Alterar senha
+        </h2>
+        <p className="text-xs sm:text-sm text-muted-foreground mb-6">
+          Para trocar, confirme a senha atual e escolha a nova (mínimo de 8 caracteres).
+        </p>
+
+        <form onSubmit={handlePasswordChange} className="space-y-5">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
+              Senha atual
+            </label>
+            <Input
+              required
+              type="password"
+              autoComplete="current-password"
+              placeholder="••••••••"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              className="rounded-xl"
+            />
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                Nova senha
+              </label>
+              <Input
+                required
+                type="password"
+                autoComplete="new-password"
+                placeholder="Mínimo de 8 caracteres"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="rounded-xl"
+                minLength={8}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                Confirmar nova senha
+              </label>
+              <Input
+                required
+                type="password"
+                autoComplete="new-password"
+                placeholder="Repita a nova senha"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="rounded-xl"
+                minLength={8}
+              />
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <Button
+              type="submit"
+              disabled={savingPassword}
+              className="w-full rounded-xl bg-primary hover:bg-primary/90 text-white font-semibold py-5 gap-2"
+            >
+              {savingPassword ? 'Alterando...' : 'Alterar senha'}
+              <KeyRound className="w-4 h-4" />
             </Button>
           </div>
         </form>

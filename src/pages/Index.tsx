@@ -14,7 +14,6 @@ import {
   Tag as TagIcon,
   Layers,
   ArrowRight,
-  ArrowDown,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -185,20 +184,9 @@ export default function Index() {
             Cadastre a sua, veja a dos outros, faça do seu jeito.
           </p>
 
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-7">
-            {currentUser ? (
-              <Button
-                asChild
-                size="lg"
-                className="w-full sm:w-auto bg-tomate hover:bg-tomate/90 text-creme font-semibold rounded-full px-8 py-6 text-base gap-2"
-              >
-                <Link to="/minha-cozinha">
-                  Cortar a minha rodela
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-              </Button>
-            ) : (
+          {/* CTA de cadastro (visível apenas para quem ainda não tem conta) */}
+          {!currentUser && (
+            <div className="flex items-center justify-center mb-7">
               <Button
                 asChild
                 size="lg"
@@ -209,19 +197,8 @@ export default function Index() {
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>
-            )}
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="w-full sm:w-auto border-espresso/25 text-espresso hover:bg-espresso/5 font-semibold rounded-full px-8 py-6 text-base gap-2"
-            >
-              <a href="#receitas">
-                Ver receitas
-                <ArrowDown className="w-5 h-5" />
-              </a>
-            </Button>
-          </div>
+            </div>
+          )}
 
           {/* Busca */}
           <form onSubmit={handleSearchSubmit} className="relative max-w-xl mx-auto">
@@ -423,19 +400,19 @@ export default function Index() {
 
       {/* ============ MANIFESTO ============ */}
       <section className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-4">
-        <div className="bg-espresso rounded-3xl px-6 py-10 sm:px-12 sm:py-12 text-center">
-          <RodelaMark className="w-10 h-10 mx-auto mb-5" arc="var(--creme)" />
+        <div className="bg-espresso rounded-3xl px-6 py-8 sm:px-12 sm:py-10 text-center flex flex-col items-center">
+          <RodelaMark className="w-10 h-10 mb-4" arc="var(--creme)" />
           <p className="font-display text-creme text-lg sm:text-2xl leading-relaxed">
             Toda receita começou na cozinha de alguém.
           </p>
-          <p className="text-creme/80 text-sm sm:text-base leading-relaxed mt-4 max-w-xl mx-auto">
+          <p className="text-creme/80 text-sm sm:text-base leading-relaxed mt-2.5 max-w-xl mx-auto">
             Aqui ela tem nome, tem dono e tem história. E se você fizer diferente, isso não é erro —
             é uma rodela da anterior.
           </p>
           {!currentUser && (
             <Button
               asChild
-              className="mt-8 bg-tomate hover:bg-tomate/90 text-creme font-semibold rounded-full px-7 py-5 gap-2"
+              className="mt-5 bg-tomate hover:bg-tomate/90 text-creme font-semibold rounded-full px-7 py-4 gap-2"
             >
               <Link to="/cadastro">
                 Colocar minha receita lá dentro
