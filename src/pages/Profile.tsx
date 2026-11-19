@@ -113,7 +113,7 @@ export default function Profile() {
                   className="hidden"
                 />
               </label>
-              <p className="text-[11px] text-muted-foreground mt-1">JPG, PNG ou WebP até 5MB</p>
+              <p className="text-[11px] text-muted-foreground mt-1">JPG ou PNG, até 5MB</p>
             </div>
           </div>
 

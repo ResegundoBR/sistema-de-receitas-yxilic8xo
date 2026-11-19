@@ -320,7 +320,7 @@ export default function RecipeForm() {
           {/* Cover Upload */}
           <div className="space-y-2">
             <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
-              Foto de Capa (JPG, PNG ou WebP até 8MB)
+              Foto de capa (JPG ou PNG, até 8MB)
             </label>
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <label className="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-border hover:border-primary bg-muted/40 text-foreground text-sm font-medium transition-colors">

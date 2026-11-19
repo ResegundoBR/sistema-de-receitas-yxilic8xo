@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { authService } from '@/services/authService'
 import type { User } from '@/types/recipe'
 import { RodelaLogo } from '@/components/brand/RodelaMark'
@@ -7,11 +7,7 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { Search, Plus, Menu, X, LogOut, BookMarked, Compass, ChefHat } from 'lucide-react'
 
-interface LayoutProps {
-  children: React.ReactNode
-}
-
-export default function Layout({ children }: LayoutProps) {
+export default function Layout() {
   const navigate = useNavigate()
   const { toast } = useToast()
   const [searchOpen, setSearchOpen] = useState(false)
@@ -19,7 +15,7 @@ export default function Layout({ children }: LayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [user, setUser] = useState<User | null>(authService.getCurrentUser())
 
-  authService.onAuthChange((u) => setUser(u))
+  useEffect(() => authService.subscribe((u) => setUser(u)), [])
 
   const handleLogout = () => {
     authService.logout()
@@ -184,7 +180,9 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </header>
 
-      <main>{children}</main>
+      <main>
+        <Outlet />
+      </main>
 
       <footer className="border-t border-border/60 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">

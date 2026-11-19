@@ -174,8 +174,7 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       {/* ============ HERO DE CONVERSÃO ============ */}
       <section className="relative overflow-hidden bg-creme border-b border-border/60">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-10 sm:pt-16 sm:pb-14 text-center">
-          <RodelaMark className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-5" />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 pb-10 sm:pt-8 sm:pb-14 text-center">
           <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-espresso leading-[1.05] tracking-tight mb-4">
             Receita de
             <br />
@@ -264,6 +263,123 @@ export default function Index() {
               Acha a receita mesmo digitando errado.
             </p>
           </form>
+
+          {/* Categorias + filtro por tags — logo abaixo da busca */}
+          <div className="mt-6 mb-2 text-left">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Layers className="w-4 h-4 text-tomate" />
+                Categorias
+              </h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setFilterDrawerOpen(!filterDrawerOpen)}
+                className="text-xs gap-1.5 rounded-full border-border/80"
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 text-tomate" />
+                <span>
+                  Filtrar {tagsFromUrl.length > 0 ? `(${tagsFromUrl.length})` : 'por tags'}
+                </span>
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-1 px-1">
+              <button
+                onClick={() => handleSelectCategory('')}
+                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
+                  !categoryFromUrl
+                    ? 'bg-espresso text-creme'
+                    : 'bg-creme border border-border text-espresso hover:border-tomate/50'
+                }`}
+              >
+                Todas as Receitas
+              </button>
+              {rootCategories.map((cat) => {
+                const isSelected = categoryFromUrl === cat.slug
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => handleSelectCategory(cat.slug)}
+                    className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
+                      isSelected
+                        ? 'bg-tomate text-creme font-semibold'
+                        : 'bg-creme border border-border text-espresso hover:border-tomate/50'
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Painel de facetas (interseção de tags) */}
+          {filterDrawerOpen && (
+            <div className="mt-4 mb-2 p-5 sm:p-6 bg-creme rounded-2xl border border-areia/70 animate-fade-in text-left">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <TagIcon className="w-5 h-5 text-tomate" />
+                  <h3 className="font-display text-espresso text-base">Filtrar por tags</h3>
+                </div>
+                <div className="flex items-center gap-2">
+                  {tagsFromUrl.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        const newParams = new URLSearchParams(searchParams)
+                        newParams.delete('tags')
+                        setSearchParams(newParams)
+                      }}
+                      className="text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      Limpar tags
+                    </Button>
+                  )}
+                  <button
+                    onClick={() => setFilterDrawerOpen(false)}
+                    className="p-1 rounded-full hover:bg-muted text-muted-foreground"
+                    aria-label="Fechar filtros"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              <p className="text-xs text-muted-foreground mb-4">
+                Marque duas tags e mostramos só as receitas que têm as duas.
+              </p>
+
+              <div className="space-y-4">
+                {Object.entries(tagsByDimension).map(([dimension, dimensionTags]) => (
+                  <div key={dimension} className="space-y-1.5">
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
+                      {dimensionLabels[dimension] || dimension}
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {dimensionTags.map((tag) => {
+                        const isTagSelected = tagsFromUrl.includes(tag.slug)
+                        return (
+                          <button
+                            key={tag.id}
+                            onClick={() => handleToggleTag(tag.slug)}
+                            className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${
+                              isTagSelected
+                                ? 'bg-lima text-espresso border-lima font-semibold'
+                                : 'bg-background hover:bg-areia-soft border-border text-espresso'
+                            }`}
+                          >
+                            {tag.name}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -329,123 +445,8 @@ export default function Index() {
         </div>
       </section>
 
-      {/* ============ EXPLORAR: CATEGORIAS + FACETAS + RESULTADOS ============ */}
+      {/* ============ EXPLORAR: FACETAS + RESULTADOS ============ */}
       <div id="explorar" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 scroll-mt-20">
-        {/* Categorias rasas (árvore de profundidade 1) */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Layers className="w-4 h-4 text-tomate" />
-              Categorias
-            </h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setFilterDrawerOpen(!filterDrawerOpen)}
-              className="text-xs gap-1.5 rounded-full border-border/80"
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-tomate" />
-              <span>Filtrar {tagsFromUrl.length > 0 ? `(${tagsFromUrl.length})` : 'por tags'}</span>
-            </Button>
-          </div>
-
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-1 px-1">
-            <button
-              onClick={() => handleSelectCategory('')}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
-                !categoryFromUrl
-                  ? 'bg-espresso text-creme'
-                  : 'bg-creme border border-border text-espresso hover:border-tomate/50'
-              }`}
-            >
-              Todas as Receitas
-            </button>
-            {rootCategories.map((cat) => {
-              const isSelected = categoryFromUrl === cat.slug
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => handleSelectCategory(cat.slug)}
-                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
-                    isSelected
-                      ? 'bg-tomate text-creme font-semibold'
-                      : 'bg-creme border border-border text-espresso hover:border-tomate/50'
-                  }`}
-                >
-                  {cat.name}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Painel de facetas (interseção de tags) */}
-        {filterDrawerOpen && (
-          <div className="mb-8 p-5 sm:p-6 bg-creme rounded-2xl border border-areia/70 animate-fade-in">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <TagIcon className="w-5 h-5 text-tomate" />
-                <h3 className="font-display text-espresso text-base">Filtrar por tags</h3>
-              </div>
-              <div className="flex items-center gap-2">
-                {tagsFromUrl.length > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      const newParams = new URLSearchParams(searchParams)
-                      newParams.delete('tags')
-                      setSearchParams(newParams)
-                    }}
-                    className="text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
-                  >
-                    Limpar tags
-                  </Button>
-                )}
-                <button
-                  onClick={() => setFilterDrawerOpen(false)}
-                  className="p-1 rounded-full hover:bg-muted text-muted-foreground"
-                  aria-label="Fechar filtros"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            <p className="text-xs text-muted-foreground mb-4">
-              Marque duas tags e mostramos só as receitas que têm as duas.
-            </p>
-
-            <div className="space-y-4">
-              {Object.entries(tagsByDimension).map(([dimension, dimensionTags]) => (
-                <div key={dimension} className="space-y-1.5">
-                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
-                    {dimensionLabels[dimension] || dimension}
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {dimensionTags.map((tag) => {
-                      const isTagSelected = tagsFromUrl.includes(tag.slug)
-                      return (
-                        <button
-                          key={tag.id}
-                          onClick={() => handleToggleTag(tag.slug)}
-                          className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${
-                            isTagSelected
-                              ? 'bg-lima text-espresso border-lima font-semibold'
-                              : 'bg-background hover:bg-areia-soft border-border text-espresso'
-                          }`}
-                        >
-                          {tag.name}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Barra de filtros ativos */}
         {isBrowsing && (
           <div className="mb-6 flex flex-wrap items-center gap-2 p-3 bg-areia-soft rounded-xl border border-areia/50">
