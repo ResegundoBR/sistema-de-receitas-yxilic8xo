@@ -116,7 +116,7 @@ export function ConnectorButton({
         </a>
       )}
       {error && (
-        <p role="alert" className="mt-1 text-sm text-destructive">
+        <p role="alert" className="mt-1 text-sm text-red-600">
           {error}
         </p>
       )}

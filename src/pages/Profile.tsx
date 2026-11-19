@@ -88,8 +88,8 @@ export default function Profile() {
           Meu Perfil
         </h1>
         <p className="text-xs sm:text-sm text-muted-foreground mb-6">
-          Atualize seus dados pessoais. O nome de usuário é imutável para não quebrar links públicos
-          compartilhados.
+          Atualize seus dados pessoais. O apelido é fixo: é por ele que as pessoas encontram suas
+          receitas.
         </p>
 
         <form onSubmit={handleSave} className="space-y-5">
@@ -108,7 +108,7 @@ export default function Profile() {
                 <span>Trocar Foto</span>
                 <input
                   type="file"
-                  accept="image/jpeg,image/png,image/webp"
+                  accept="image/jpeg,image/png"
                   onChange={handleAvatarChange}
                   className="hidden"
                 />

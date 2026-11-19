@@ -22,6 +22,8 @@ const App = () => (
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Index />} />
+          {/* Explorar: busca e navegação pelo acervo público */}
+          <Route path="/explorar" element={<Index />} />
           {/* Public recipe share route /r/:username/:slug */}
           <Route path="/r/:username/:slug" element={<RecipeDetail />} />
 

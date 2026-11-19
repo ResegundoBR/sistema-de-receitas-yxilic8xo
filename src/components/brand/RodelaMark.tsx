@@ -1,4 +1,4 @@
-/* Rodela — brand mark (símbolo: arco de círculo + ponto, "a rodela") */
+/* Rodela — brand mark (símbolo: arco + ponto, "a rodela") */
 interface RodelaMarkProps {
   className?: string
   /** cor do arco; padrão: tomate */
@@ -8,19 +8,25 @@ interface RodelaMarkProps {
 }
 
 /**
- * Símbolo da Rodela: um arco (segmento de círculo) com um ponto solto,
- * como uma fatia saindo do círculo. Herda a cor atual via `currentColor`
- * quando nenhuma cor é passada.
+ * Símbolo da Rodela: um arco (semicírculo) aberto para cima/direita
+ * com um ponto (círculo cheio) sobreposto — ver referência visual da marca.
+ * Cores fixas (tomate #FF4D2E) a pedido do usuário, não herdadas do tema.
  */
 export function RodelaMark({ className, arc, dot }: RodelaMarkProps) {
-  const arcColor = arc ?? 'var(--tomate, #FF4D2E)'
+  const arcColor = arc ?? '#FF4D2E'
   const dotColor = dot ?? arcColor
   return (
     <svg viewBox="0 0 48 48" fill="none" className={className} aria-hidden="true">
-      {/* arco: segmento de círculo (a "rodela") */}
-      <path d="M8 6 A22 22 0 0 1 30 40 L30 22 A12 12 0 0 0 22 10 Z" fill={arcColor} />
-      {/* ponto */}
-      <circle cx="37" cy="11" r="6" fill={dotColor} />
+      {/* arco: semicírculo aberto para cima/direita */}
+      <path
+        d="M6 24 A 18 18 0 0 0 42 24"
+        stroke={arcColor}
+        strokeWidth="11"
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* ponto: círculo cheio sobreposto ao arco */}
+      <circle cx="36" cy="9" r="7" fill={dotColor} />
     </svg>
   )
 }
@@ -57,8 +63,8 @@ export function RodelaLogo({
   /** invertida: creme sobre espresso (fundo escuro) */
   invert?: boolean
 }) {
-  const arc = invert ? 'var(--creme, #F7F2E8)' : 'var(--tomate, #FF4D2E)'
-  const dot = invert ? 'var(--creme, #F7F2E8)' : 'var(--tomate, #FF4D2E)'
+  const arc = invert ? 'var(--creme, #F7F2E8)' : undefined
+  const dot = invert ? 'var(--creme, #F7F2E8)' : undefined
   const text = invert ? 'text-creme' : 'text-espresso'
   return (
     <span className={'inline-flex items-center gap-2 ' + (className ?? '')}>

@@ -1,25 +1,21 @@
-/* 404 Page - Displays when a user attempts to access a non-existent route - translate to the language of the user */
-import { useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+/* 404 — Página não encontrada (em português, com a marca Rodela) */
+import { Link } from 'react-router-dom'
+import { RodelaMark } from '@/components/brand/RodelaMark'
 
-const NotFound = () => {
-  const location = useLocation()
-
-  useEffect(() => {
-    console.error('404 Error: User attempted to access non-existent route:', location.pathname)
-  }, [location.pathname])
-
+export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-[70vh] flex items-center justify-center bg-creme px-4">
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-primary hover:text-primary/80 underline">
-          Return to Home
-        </a>
+        <RodelaMark className="w-14 h-14 mx-auto mb-6" />
+        <h1 className="font-display text-5xl sm:text-6xl text-espresso mb-4">404</h1>
+        <p className="text-xl text-espresso/80 mb-8">Página não encontrada.</p>
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 rounded-full bg-tomate hover:bg-tomate/90 text-creme font-semibold px-6 py-3 transition-colors"
+        >
+          Voltar ao início
+        </Link>
       </div>
     </div>
   )
 }
-
-export default NotFound

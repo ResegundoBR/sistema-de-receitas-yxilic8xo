@@ -140,13 +140,13 @@ export default function Register() {
                 <span>Colocar sua foto</span>
                 <input
                   type="file"
-                  accept="image/jpeg,image/png,image/webp"
+                  accept="image/jpeg,image/png"
                   onChange={handleAvatarChange}
                   className="hidden"
                 />
               </label>
               <p className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1">
-                <Camera className="w-3 h-3" /> JPG, PNG ou WebP, até 5MB
+                <Camera className="w-3 h-3" /> JPG ou PNG, até 5MB
               </p>
             </div>
           </div>
