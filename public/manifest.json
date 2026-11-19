@@ -1,0 +1,22 @@
+{
+  "short_name": "Receitas",
+  "name": "Sistema de Receitas — Acervo & Rede Culinária",
+  "icons": [
+    {
+      "src": "https://img.usecurling.com/i?q=chef&color=orange&shape=fill",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://img.usecurling.com/i?q=chef&color=orange&shape=fill",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FFFBF7",
+  "theme_color": "#EA580C",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/"
+}

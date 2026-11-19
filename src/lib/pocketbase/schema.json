@@ -1,0 +1,755 @@
+{
+  "generatedAt": "2026-11-19T17:58:21.400Z",
+  "collections": [
+    {
+      "name": "users",
+      "type": "auth",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "",
+        "update": "id = @request.auth.id",
+        "delete": "id = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "avatar",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "display_name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "bio",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "city",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "state",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "role",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["user", "creator", "admin"]
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX `idx_tokenKey__pb_users_auth_` ON `users` (`tokenKey`)",
+        "CREATE UNIQUE INDEX `idx_email__pb_users_auth_` ON `users` (`email`) WHERE `email` != ''"
+      ]
+    },
+    {
+      "name": "categories",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": null,
+        "update": null,
+        "delete": null
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "depth",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "sort_order",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "icon",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "parent",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "categories"
+        }
+      ],
+      "indexes": ["CREATE UNIQUE INDEX idx_categories_slug ON categories (slug)"]
+    },
+    {
+      "name": "tags",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": null,
+        "update": null,
+        "delete": null
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "dimension",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": [
+            "ingrediente",
+            "tecnica",
+            "dieta",
+            "ocasiao",
+            "regiao",
+            "equipamento",
+            "estacao",
+            "custo"
+          ]
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_tags_slug ON tags (slug)",
+        "CREATE INDEX idx_tags_dimension ON tags (dimension)"
+      ]
+    },
+    {
+      "name": "ingredients",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": null,
+        "update": null,
+        "delete": null
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "category",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "default_unit",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "density_g_ml",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE UNIQUE INDEX idx_ingredients_slug ON ingredients (slug)"]
+    },
+    {
+      "name": "recipes",
+      "type": "base",
+      "apiRules": {
+        "list": "status = \"published\" && visibility = \"public\"",
+        "view": "(status = \"published\" && visibility != \"private\") || author = @request.auth.id",
+        "create": "@request.auth.id != \"\"",
+        "update": "author = @request.auth.id",
+        "delete": null
+      },
+      "fields": [
+        {
+          "name": "author",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "category",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "categories"
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "story",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "cover",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "yield_quantity",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "yield_unit",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["porcoes", "unidades", "g", "ml"]
+        },
+        {
+          "name": "prep_minutes",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "cook_minutes",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "difficulty",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "license",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["open", "credit", "ask", "closed"]
+        },
+        {
+          "name": "variant_note",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "variant_depth",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["draft", "published", "archived"]
+        },
+        {
+          "name": "visibility",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["public", "unlisted", "private"]
+        },
+        {
+          "name": "cooksnap_count",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "variant_count",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "save_count",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "ingredient_count",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "search_text",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "tag_index",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "parent_recipe",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "recipes"
+        },
+        {
+          "name": "root_recipe",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "recipes"
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_recipes_author_slug ON recipes (author, slug)",
+        "CREATE INDEX idx_recipes_search_text ON recipes (search_text)",
+        "CREATE INDEX idx_recipes_status_visibility ON recipes (status, visibility)",
+        "CREATE INDEX `idx_recipes_root_recipe` ON `recipes` (root_recipe)"
+      ]
+    },
+    {
+      "name": "recipe_ingredients",
+      "type": "base",
+      "apiRules": {
+        "list": "recipe.status = \"published\" && recipe.visibility != \"private\"",
+        "view": "recipe.status = \"published\" && recipe.visibility != \"private\"",
+        "create": "@request.auth.id != \"\"",
+        "update": "recipe.author = @request.auth.id",
+        "delete": "recipe.author = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "recipe",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "recipes"
+        },
+        {
+          "name": "position",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "ingredient",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "ingredients"
+        },
+        {
+          "name": "raw_text",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "quantity",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "unit",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "preparation",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "is_optional",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "group_label",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_recipe_ingredients_recipe ON recipe_ingredients (recipe, position)"
+      ]
+    },
+    {
+      "name": "recipe_steps",
+      "type": "base",
+      "apiRules": {
+        "list": "recipe.status = \"published\" && recipe.visibility != \"private\"",
+        "view": "recipe.status = \"published\" && recipe.visibility != \"private\"",
+        "create": "@request.auth.id != \"\"",
+        "update": "recipe.author = @request.auth.id",
+        "delete": "recipe.author = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "recipe",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "recipes"
+        },
+        {
+          "name": "position",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "instruction",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "duration_min",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "temperature_c",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "technique",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "image",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "group_label",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE INDEX idx_recipe_steps_recipe ON recipe_steps (recipe, position)"]
+    },
+    {
+      "name": "recipe_tags",
+      "type": "base",
+      "apiRules": {
+        "list": "recipe.status = \"published\" && recipe.visibility != \"private\"",
+        "view": "recipe.status = \"published\" && recipe.visibility != \"private\"",
+        "create": "@request.auth.id != \"\"",
+        "update": "recipe.author = @request.auth.id",
+        "delete": "recipe.author = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "recipe",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "recipes"
+        },
+        {
+          "name": "tag",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "tags"
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE UNIQUE INDEX idx_recipe_tags_unique ON recipe_tags (recipe, tag)"]
+    },
+    {
+      "name": "collections",
+      "type": "base",
+      "apiRules": {
+        "list": "is_private = false || owner = @request.auth.id",
+        "view": "is_private = false || owner = @request.auth.id",
+        "create": "@request.auth.id != \"\"",
+        "update": "owner = @request.auth.id",
+        "delete": "owner = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "owner",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "is_private",
+          "type": "bool",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE INDEX idx_collections_owner ON collections (owner)"]
+    },
+    {
+      "name": "saved_recipes",
+      "type": "base",
+      "apiRules": {
+        "list": "owner = @request.auth.id",
+        "view": "owner = @request.auth.id",
+        "create": "@request.auth.id != \"\"",
+        "update": "owner = @request.auth.id",
+        "delete": "owner = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "owner",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "recipe",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "recipes"
+        },
+        {
+          "name": "collection",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "collections"
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_saved_recipes_owner_recipe ON saved_recipes (owner, recipe)"
+      ]
+    }
+  ]
+}
