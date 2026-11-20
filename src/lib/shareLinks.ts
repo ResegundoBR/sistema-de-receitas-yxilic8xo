@@ -25,18 +25,36 @@ function recordVersionStamp(record?: { updated?: string; created?: string } | nu
   return Number.isNaN(ms) ? null : String(Math.floor(ms / 1000))
 }
 
-/** Monta o link de uma receita a partir do username, do slug e do registro. */
+/**
+ * Normaliza barras duplicadas no caminho de uma URL, preservando o esquema
+ * ("https://" continua intacto). Ex.: "https://h//r//user/slug" → "https://h/r/user/slug".
+ */
+export function normalizePublicRecipeUrl(url: string): string {
+  const schemeMatch = url.match(/^[a-z][a-z0-9+.-]*:\/\//i)
+  const scheme = schemeMatch ? schemeMatch[0] : ''
+  const rest = url.slice(scheme.length)
+  return scheme + rest.replace(/\/{2,}/g, '/')
+}
+
+/** Segmento de caminho limpo (sem barras nas pontas e sem espaços), ou ''. */
+function cleanSegment(value: string | null | undefined): string {
+  return (value || '').trim().replace(/^\/+|\/+$/g, '')
+}
+
+/**
+ * Monta o link público de uma receita: {backend}/r/{username}/{slug}?v={epoch}.
+ * Retorna '' quando username ou slug estão vazios — nunca monta "/r//...".
+ * Quem chama deve tratar '' como "link indisponível".
+ */
 export function publicRecipeUrl(
   username: string,
   slug: string,
   record?: { updated?: string; created?: string } | null,
 ): string {
-  const base = `${BACKEND_BASE_URL}/r/${username}/${slug}`
+  const user = cleanSegment(username)
+  const recipeSlug = cleanSegment(slug)
+  if (!user || !recipeSlug) return ''
+  const base = normalizePublicRecipeUrl(`${BACKEND_BASE_URL}/r/${user}/${recipeSlug}`)
   const stamp = recordVersionStamp(record)
   return stamp ? `${base}?v=${stamp}` : base
-}
-
-/** Normaliza barras duplicadas (//r/ → /r/) em links antigos tortos. */
-export function normalizePublicRecipeUrl(url: string): string {
-  return url.replace(/([^:])\/{2,}/g, '$1/')
 }

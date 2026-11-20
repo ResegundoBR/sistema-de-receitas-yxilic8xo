@@ -204,7 +204,15 @@ export default function RecipeDetail() {
   // Share link (ideal for WhatsApp) — aponta para o backend, onde o hook
   // routes.pb.js entrega as meta tags OG que montam o cartão.
   const handleShare = async () => {
-    const url = username && slug ? publicRecipeUrl(username, slug, recipe) : window.location.href
+    const url = username && slug ? publicRecipeUrl(username, slug, recipe) : ''
+    if (!url) {
+      toast({
+        title: 'Link indisponível',
+        description: 'Não foi possível montar o link público desta receita agora.',
+        variant: 'destructive',
+      })
+      return
+    }
     const shareText = `Confira esta receita: ${recipe?.title} por @${username}!`
 
     // Fluxo reequilibrado: a janela nativa de compartilhamento vem PRIMEIRO

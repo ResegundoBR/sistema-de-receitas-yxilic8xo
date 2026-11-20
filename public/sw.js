@@ -16,7 +16,9 @@
 //    sw.js nunca é lido do cache HTTP, então deploys não ficam presos por 24h.
 //  - Caches de versões antigas são apagados no activate.
 
-const CACHE_NAME = 'rodela-shell-v2'
+// Versão do cache: subir o número força todos os navegadores a baixar o shell
+// e o bundle novos (o activate apaga os caches das versões antigas).
+const CACHE_NAME = 'rodela-shell-v3'
 const PRECACHE = ['/', '/index.html', '/manifest.json', '/icon.svg', '/icon-maskable.svg']
 
 self.addEventListener('install', (event) => {
