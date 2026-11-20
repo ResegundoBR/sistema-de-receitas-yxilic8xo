@@ -64,15 +64,13 @@ export const authService = {
     if (data.state !== undefined) formData.append('state', data.state)
     if (data.avatar) formData.append('avatar', data.avatar)
 
-    const updated = await pb.collection('users').update(userId, formData)
+    await pb.collection('users').update(userId, formData)
 
-    // Sincroniza a sessão com o registro novo: sem isto, o usuário continua
-    // vendo os dados antigos (avatar, nome, cidade) até deslogar.
-    if (pb.authStore.record && pb.authStore.record.id === userId) {
-      pb.authStore.save(updated.token || pb.authStore.token, updated)
-    }
-
-    return updated as unknown as User
+    // Revalida a sessão direto no servidor e sincroniza o authStore com o
+    // registro novo: sem isto, o usuário continua vendo os dados antigos
+    // (avatar, nome, cidade) até deslogar — e "salvar" parece não funcionar.
+    await pb.collection('users').authRefresh()
+    return pb.authStore.record as unknown as User
   },
 
   async requestPasswordReset(email: string): Promise<void> {
