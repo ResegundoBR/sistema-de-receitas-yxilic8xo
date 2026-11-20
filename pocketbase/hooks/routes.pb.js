@@ -80,7 +80,27 @@ routerAdd('GET', '/r/{username}/{slug}', (e) => {
   }
 
   // URL canônica para crawlers: rota no backend (é ela que os bots pedem).
-  const currentUrl = BACKEND_BASE_URL + '/r/' + username + '/' + slug
+  // Carrega o MESMO sufixo ?v={epoch} que o link compartilhado usa
+  // (src/lib/shareLinks.ts: Math.floor(Date.parse(updated)/1000)) — sem isso o
+  // WhatsApp resolve o link com ?v= para a identidade canônica sem sufixo e
+  // reexibe a prévia em cache de versões antigas quebradas.updated → created →
+  // sem sufixo. Declarado dentro do callback (regra do JSVM).
+  const versionStamp = (function () {
+    const fields = ['updated', 'created']
+    for (let i = 0; i < fields.length; i++) {
+      try {
+        const iso = recipe.getDateTime(fields[i]).string()
+        // PocketBase serializa DateTime com espaço ("2026-01-02 03:04:05.000Z");
+        // alguns Date.parse só aceitam a forma ISO com "T" — tenta as duas.
+        let ms = Date.parse(iso)
+        if (isNaN(ms)) ms = Date.parse(String(iso).replace(' ', 'T'))
+        if (!isNaN(ms)) return String(Math.floor(ms / 1000))
+      } catch (_) {}
+    }
+    return ''
+  })()
+  const currentUrl =
+    BACKEND_BASE_URL + '/r/' + username + '/' + slug + (versionStamp ? '?v=' + versionStamp : '')
 
   if (isCrawler) {
     // Escapa &, <, >, ", ' para o título/descrição nunca quebrarem o HTML
