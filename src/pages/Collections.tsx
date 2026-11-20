@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dialog'
 import { useToast } from '@/hooks/use-toast'
 import { RodelaMark } from '@/components/brand/RodelaMark'
+import { publicRecipeUrl } from '@/lib/shareLinks'
 
 export default function Collections() {
   const navigate = useNavigate()
@@ -190,7 +191,7 @@ export default function Collections() {
             if (!recipe) return null
             const author = recipe.expand?.author
             const authorUsername = author?.username || 'autor'
-            const publicLink = `/r/${authorUsername}/${recipe.slug}`
+            const publicLink = publicRecipeUrl(authorUsername, recipe.slug)
 
             return (
               <Card

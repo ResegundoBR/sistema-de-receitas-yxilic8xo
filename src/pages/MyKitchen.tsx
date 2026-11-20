@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/hooks/use-toast'
+import { publicRecipeUrl } from '@/lib/shareLinks'
 
 export default function MyKitchen() {
   const navigate = useNavigate()
@@ -178,7 +179,7 @@ export default function MyKitchen() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRecipes.map((recipe) => {
             const authorUsername = currentUser?.username || 'autor'
-            const publicUrl = `/r/${authorUsername}/${recipe.slug}`
+            const publicUrl = publicRecipeUrl(authorUsername, recipe.slug)
 
             return (
               <Card

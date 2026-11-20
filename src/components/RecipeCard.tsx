@@ -5,6 +5,7 @@ import { getLicenseLabel } from '@/lib/license'
 import { RodelaMark } from '@/components/brand/RodelaMark'
 import { Clock, Lock, Link as LinkIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { publicRecipeUrl } from '@/lib/shareLinks'
 
 interface RecipeCardProps {
   recipe: Recipe
@@ -18,8 +19,8 @@ export function RecipeCard({ recipe, showStatusBadge }: RecipeCardProps) {
   const licenseLabel = getLicenseLabel(recipe.license)
   const hasCover = Boolean(recipe.cover)
 
-  // Link público da receita: /r/:username/:slug
-  const recipeLink = `/r/${authorUsername}/${recipe.slug}`
+  // Link público da receita: /r/:username/:slug (host do backend, com OG tags)
+  const recipeLink = publicRecipeUrl(authorUsername, recipe.slug)
 
   return (
     <Link

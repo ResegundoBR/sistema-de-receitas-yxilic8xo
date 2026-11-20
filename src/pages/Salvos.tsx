@@ -28,6 +28,7 @@ import {
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import { RodelaMark } from '@/components/brand/RodelaMark'
+import { publicRecipeUrl } from '@/lib/shareLinks'
 
 export default function Salvos() {
   const { toast } = useToast()
@@ -218,7 +219,7 @@ export default function Salvos() {
                     key={item.id}
                     className="group bg-card rounded-2xl border border-border/70 overflow-hidden flex flex-col"
                   >
-                    <Link to={`/r/${authorUsername}/${recipe.slug}`} className="block">
+                    <Link to={publicRecipeUrl(authorUsername, recipe.slug)} className="block">
                       <div className="aspect-[16/9] bg-muted overflow-hidden">
                         {recipe.cover ? (
                           <img
@@ -258,7 +259,7 @@ export default function Salvos() {
                           size="sm"
                           className="rounded-lg text-xs gap-1"
                         >
-                          <Link to={`/r/${authorUsername}/${recipe.slug}`}>
+                          <Link to={publicRecipeUrl(authorUsername, recipe.slug)}>
                             <ExternalLink className="w-3.5 h-3.5 text-tomate" />
                             Abrir receita
                           </Link>

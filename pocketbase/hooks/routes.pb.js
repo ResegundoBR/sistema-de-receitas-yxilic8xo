@@ -1,7 +1,32 @@
 // pocketbase/hooks/routes.pb.js
 
 // 1. GET /r/{username}/{slug} — Public share link with crawler OG tags & human redirection
+//    + rota curinga que normaliza barras duplicadas (//r/… → /r/…): o router
+//    do PocketBase não casa um path torto no template, então a variante com
+//    {segments...} captura o path inteiro, limpa as barras e 302 para o caminho
+//    limpo — onde o hook de OG tags responde.
+routerAdd('GET', '/r/{segments...}', (e) => {
+  const FRONTEND_BASE_URL = 'https://sistema-de-receitas-6b58a.goskip.app'
+  const raw = e.request.pathValue('segments') || ''
+  const parts = raw
+    .split('/')
+    .filter(function (p) {
+      return p !== ''
+    })
+    .slice(0, 2)
+  if (parts.length < 2) {
+    return e.redirect(302, FRONTEND_BASE_URL)
+  }
+  return e.redirect(302, FRONTEND_BASE_URL + '/r/' + parts[0] + '/' + parts[1])
+})
+
+// Rota limpa: OG tags para crawlers, 302 absoluto para o frontend para humanos
 routerAdd('GET', '/r/{username}/{slug}', (e) => {
+  // Domínios reais deste projeto (Skip Cloud) — declarados DENTRO do callback:
+  // o JSVM roda callbacks em pool separado, constantes de topo dão
+  // ReferenceError (ver deploy desta run).
+  const FRONTEND_BASE_URL = 'https://sistema-de-receitas-6b58a.goskip.app'
+  const BACKEND_BASE_URL = 'https://sistema-de-receitas-6b58a.shrd01.internal.goskip.dev'
   const username = e.request.pathValue('username')
   const slug = e.request.pathValue('slug')
   const userAgent = (e.request.header.get('user-agent') || '').toLowerCase()
@@ -41,12 +66,14 @@ routerAdd('GET', '/r/{username}/{slug}', (e) => {
 
   // WhatsApp e demais redes exigem URL ABSOLUTA no og:image.
   // Thumbs do PocketBase são geradas sob demanda via ?thumb= (não é migração).
-  const PUBLIC_BASE_URL = 'https://sistema-de-receitas-6b58a.goskip.app'
-  // Imagem padrão (receita sem capa), absoluta no domínio real do app.
-  let imageUrl = PUBLIC_BASE_URL + '/og-receita-padrao.jpg'
+  // og:image fica no BACKEND (a API de arquivos responde nele); a imagem
+  // padrão (arquivo estático) fica no FRONTEND.
+  let imageUrl = FRONTEND_BASE_URL + '/og-receita-padrao.jpg'
   if (coverFile) {
     imageUrl =
-      PUBLIC_BASE_URL +
+      e.request.url.scheme +
+      '://' +
+      e.request.url.host +
       '/api/files/' +
       recipe.collection().id +
       '/' +
@@ -56,7 +83,8 @@ routerAdd('GET', '/r/{username}/{slug}', (e) => {
       '?thumb=1200x630'
   }
 
-  const currentUrl = e.request.url.string()
+  // URL canônica para crawlers: rota no backend (é ela que os bots pedem).
+  const currentUrl = BACKEND_BASE_URL + '/r/' + username + '/' + slug
 
   if (isCrawler) {
     // Escapa &, <, >, ", ' para o título/descrição nunca quebrarem o HTML
@@ -104,8 +132,10 @@ routerAdd('GET', '/r/{username}/{slug}', (e) => {
     return e.html(200, html)
   }
 
-  // For human visitor, redirect to the frontend SPA route /r/:username/:slug
-  return e.redirect(302, '/r/' + username + '/' + slug)
+  // For human visitor, redirect ABSOLUTO para o frontend SPA — no domínio do
+  // backend não há SPA (só hooks e API), então um redirect relativo deixaria
+  // o humano preso no backend.
+  return e.redirect(302, FRONTEND_BASE_URL + '/r/' + username + '/' + slug)
 })
 
 // 2. GET /backend/v1/recipes/facet?tags=a,b,c

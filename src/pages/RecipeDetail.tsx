@@ -37,6 +37,7 @@ import { useToast } from '@/hooks/use-toast'
 import { Plus } from 'lucide-react'
 import { RodelaMark } from '@/components/brand/RodelaMark'
 import { getLicenseLabel, getLicenseDescription } from '@/lib/license'
+import { publicRecipeUrl } from '@/lib/shareLinks'
 
 export default function RecipeDetail() {
   const { username, slug } = useParams<{ username: string; slug: string }>()
@@ -200,9 +201,10 @@ export default function RecipeDetail() {
     }
   }
 
-  // Share link (ideal for WhatsApp)
+  // Share link (ideal for WhatsApp) — aponta para o backend, onde o hook
+  // routes.pb.js entrega as meta tags OG que montam o cartão.
   const handleShare = async () => {
-    const url = window.location.href
+    const url = username && slug ? publicRecipeUrl(username, slug) : window.location.href
     const shareText = `Confira esta receita: ${recipe?.title} por @${username}!`
 
     if (navigator.share) {
