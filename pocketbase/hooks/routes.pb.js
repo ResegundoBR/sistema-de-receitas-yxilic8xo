@@ -65,7 +65,9 @@ routerAdd('GET', '/r/{username}/{slug}', (e) => {
   const coverFile = recipe.getString('cover')
 
   // WhatsApp e demais redes exigem URL ABSOLUTA no og:image.
-  // Thumbs do PocketBase são geradas sob demanda via ?thumb= (não é migração).
+  // og:image aponta para a FOTO ORIGINAL da capa (sem ?thumb=): o recorte
+  // sob demanda não consta nas thumbs registradas do registro e o WhatsApp
+  // rejeita silenciosamente esse pedido irregular (cartão sai sem imagem).
   // og:image fica no BACKEND (a API de arquivos responde nele); a imagem
   // padrão (arquivo estático) fica no FRONTEND.
   let imageUrl = FRONTEND_BASE_URL + '/og-image.png'
@@ -74,14 +76,7 @@ routerAdd('GET', '/r/{username}/{slug}', (e) => {
     // atrás de proxy/TLS termination e.request.url.scheme pode vir vazio,
     // gerando "://host/..." — quebra o og:image do WhatsApp.
     imageUrl =
-      BACKEND_BASE_URL +
-      '/api/files/' +
-      recipe.collection().id +
-      '/' +
-      recipe.id +
-      '/' +
-      coverFile +
-      '?thumb=1200x630'
+      BACKEND_BASE_URL + '/api/files/' + recipe.collection().id + '/' + recipe.id + '/' + coverFile
   }
 
   // URL canônica para crawlers: rota no backend (é ela que os bots pedem).
