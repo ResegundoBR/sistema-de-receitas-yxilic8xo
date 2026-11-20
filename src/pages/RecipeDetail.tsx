@@ -207,24 +207,39 @@ export default function RecipeDetail() {
     const url = username && slug ? publicRecipeUrl(username, slug, recipe) : window.location.href
     const shareText = `Confira esta receita: ${recipe?.title} por @${username}!`
 
-    // Um único caminho de cópia: ou navigator.share OU clipboard.writeText —
-    // nunca ambos (o fallback anterior podia copiar o link duplicado).
+    // Fluxo reequilibrado: a janela nativa de compartilhamento vem PRIMEIRO
+    // (é ela que manda direto para um contato do WhatsApp); a cópia para a
+    // área de transferência é só o fallback quando ela não existe ou falha.
+    // Caminho único: ou a janela nativa abre OU o link é copiado uma vez —
+    // nunca ambos, para o link não sair duplicado/emendado.
     try {
-      if (navigator.share && !navigator.clipboard) {
+      if (navigator.share) {
         await navigator.share({
           title: recipe?.title,
           text: recipe?.description || shareText,
           url: url,
         })
-      } else {
-        await navigator.clipboard.writeText(url)
-        toast({
-          title: 'Link copiado!',
-          description: 'Cole no WhatsApp para compartilhar a receita.',
-        })
+        return
       }
+    } catch (err) {
+      // Cancelamento do usuário fechou a janela sem compartilhar: não copia
+      // (não adianta mostrar "copiado" para quem desistiu de compartilhar).
+      if (err instanceof DOMException && err.name === 'AbortError') return
+      // Falha real da janela nativa: segue para o clipboard abaixo.
+    }
+
+    try {
+      await navigator.clipboard.writeText(url)
+      toast({
+        title: 'Link copiado!',
+        description: 'Cole no WhatsApp para compartilhar a receita.',
+      })
     } catch {
-      /* usuário cancelou ou cópia falhou */
+      toast({
+        title: 'Não foi possível copiar o link',
+        description: 'Copie o link da barra de endereço para compartilhar a receita.',
+        variant: 'destructive',
+      })
     }
   }
 
