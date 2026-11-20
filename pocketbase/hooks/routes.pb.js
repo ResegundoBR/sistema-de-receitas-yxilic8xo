@@ -70,10 +70,11 @@ routerAdd('GET', '/r/{username}/{slug}', (e) => {
   // padrão (arquivo estático) fica no FRONTEND.
   let imageUrl = FRONTEND_BASE_URL + '/og-image.png'
   if (coverFile) {
+    // URL montada de forma DETERMINÍSTICA com a constante fixa do backend:
+    // atrás de proxy/TLS termination e.request.url.scheme pode vir vazio,
+    // gerando "://host/..." — quebra o og:image do WhatsApp.
     imageUrl =
-      e.request.url.scheme +
-      '://' +
-      e.request.url.host +
+      BACKEND_BASE_URL +
       '/api/files/' +
       recipe.collection().id +
       '/' +
