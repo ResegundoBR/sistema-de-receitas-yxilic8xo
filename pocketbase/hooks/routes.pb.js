@@ -68,7 +68,7 @@ routerAdd('GET', '/r/{username}/{slug}', (e) => {
   // Thumbs do PocketBase são geradas sob demanda via ?thumb= (não é migração).
   // og:image fica no BACKEND (a API de arquivos responde nele); a imagem
   // padrão (arquivo estático) fica no FRONTEND.
-  let imageUrl = FRONTEND_BASE_URL + '/og-receita-padrao.jpg'
+  let imageUrl = FRONTEND_BASE_URL + '/og-image.png'
   if (coverFile) {
     imageUrl =
       e.request.url.scheme +
