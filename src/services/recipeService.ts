@@ -316,6 +316,44 @@ export const recipeService = {
     return createdRecipe
   },
 
+  // Load a recipe (with ingredients, steps and tags) to fill the edit form
+  async getRecipeForEdit(recipeId: string): Promise<{
+    recipe: Recipe
+    ingredients: RecipeIngredient[]
+    steps: RecipeStep[]
+    tags: Tag[]
+  }> {
+    const recipe = await pb.collection('recipes').getOne<Recipe>(recipeId, {
+      expand: 'author,category',
+    })
+
+    const currentUserId = pb.authStore.record?.id
+    if (recipe.author !== currentUserId) {
+      throw new Error('Somente o autor pode editar esta receita.')
+    }
+
+    const ingredients = await pb.collection('recipe_ingredients').getFullList<RecipeIngredient>({
+      filter: `recipe = "${recipe.id}"`,
+      sort: 'position',
+      expand: 'ingredient',
+    })
+
+    const steps = await pb.collection('recipe_steps').getFullList<RecipeStep>({
+      filter: `recipe = "${recipe.id}"`,
+      sort: 'position',
+    })
+
+    const recipeTags = await pb
+      .collection('recipe_tags')
+      .getFullList<{ tag: string; expand?: { tag?: Tag } }>({
+        filter: `recipe = "${recipe.id}"`,
+        expand: 'tag',
+      })
+    const tags = recipeTags.map((rt) => rt.expand?.tag).filter(Boolean) as Tag[]
+
+    return { recipe, ingredients, steps, tags }
+  },
+
   // Update existing recipe (slug remains immutable)
   async updateRecipe(
     recipeId: string,

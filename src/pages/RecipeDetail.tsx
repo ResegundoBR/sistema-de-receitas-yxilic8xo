@@ -18,6 +18,7 @@ import {
   ShieldAlert,
   Flame,
   Scale,
+  Pencil,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -241,6 +242,7 @@ export default function RecipeDetail() {
   const author = recipe.expand?.author
   const authorName = author?.display_name || username || 'Autor'
   const totalMinutes = (recipe.prep_minutes || 0) + (recipe.cook_minutes || 0)
+  const isAuthor = authService.getCurrentUser()?.id === recipe.author
 
   const licenseLabel = getLicenseLabel(recipe.license)
   const licenseDesc = getLicenseDescription(recipe.license)
@@ -303,8 +305,18 @@ export default function RecipeDetail() {
               </Badge>
             )}
 
-            {/* Actions: Save & Share */}
+            {/* Actions: Edit (author only), Save & Share */}
             <div className="flex items-center gap-2 ml-auto">
+              {isAuthor && (
+                <Button
+                  size="sm"
+                  onClick={() => navigate(`/receitas/editar/${recipe.id}`)}
+                  className="rounded-full gap-1.5 text-xs font-semibold bg-[#FF4D2E] hover:bg-[#FF4D2E]/90 text-white"
+                >
+                  <Pencil className="w-4 h-4" />
+                  Editar
+                </Button>
+              )}
               <Button
                 variant={isSaved ? 'default' : 'outline'}
                 size="sm"

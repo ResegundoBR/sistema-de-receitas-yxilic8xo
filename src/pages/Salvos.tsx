@@ -162,13 +162,15 @@ export default function Salvos() {
               : 'Suas coleções de receitas guardadas.'}
           </p>
         </div>
-        <Button
-          onClick={() => setNewColOpen(true)}
-          className="rounded-full bg-tomate hover:bg-tomate/90 text-creme font-semibold gap-2 self-start"
-        >
-          <Plus className="w-4 h-4" />
-          Nova coleção
-        </Button>
+        {collections.length > 0 && (
+          <Button
+            onClick={() => setNewColOpen(true)}
+            className="rounded-full bg-tomate hover:bg-tomate/90 text-creme font-semibold gap-2 self-start"
+          >
+            <Plus className="w-4 h-4" />
+            Nova coleção
+          </Button>
+        )}
       </div>
 
       {loading ? (

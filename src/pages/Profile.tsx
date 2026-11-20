@@ -127,12 +127,23 @@ export default function Profile() {
         description: 'Suas alterações foram salvas com sucesso.',
       })
     } catch (err: any) {
+      // Erro do PocketBase pode vir em err.response.data (por campo),
+      // em err.response.message ou em err.message — mostrar sempre algo claro.
+      const fieldErrors = err?.response?.data
+        ? Object.values(err.response.data)
+            .map((v: any) => (typeof v === 'string' ? v : v?.message))
+            .filter(Boolean)
+            .join(' ')
+        : ''
+      const detail =
+        fieldErrors ||
+        err?.response?.message ||
+        err?.message ||
+        'Verifique os campos e tente de novo em instantes.'
+      console.error('Erro ao salvar perfil:', err)
       toast({
         title: 'Não conseguimos salvar suas alterações',
-        description:
-          err?.response?.message ||
-          err?.message ||
-          'Verifique os campos e tente de novo em instantes.',
+        description: detail,
         variant: 'destructive',
       })
     } finally {

@@ -119,6 +119,84 @@ export default function RecipeForm() {
     loadData()
   }, [])
 
+  // Modo edição: carregar a receita existente e preencher todos os campos
+  useEffect(() => {
+    if (!isEditing || !id) return
+
+    async function loadRecipe() {
+      setLoadingInitial(true)
+      try {
+        const data = await recipeService.getRecipeForEdit(id as string)
+        const r = data.recipe
+
+        setTitle(r.title)
+        setDescription(r.description || '')
+        setStory(r.story || '')
+        setCategoryId(r.category || '')
+        setYieldQuantity(r.yield_quantity ?? '')
+        setYieldUnit(r.yield_unit || 'porcoes')
+        setPrepMinutes(r.prep_minutes ?? '')
+        setCookMinutes(r.cook_minutes ?? '')
+        setDifficulty(r.difficulty || 2)
+        setLicense(r.license)
+        setStatus(r.status)
+        setVisibility(r.visibility)
+        setCoverPreview(recipeService.getFileUrl(r))
+        setIngredients(
+          data.ingredients.length > 0
+            ? data.ingredients.map((ing) => ({
+                raw_text: ing.raw_text || '',
+                quantity: ing.quantity,
+                unit: ing.unit || 'g',
+                preparation: ing.preparation || '',
+                is_optional: !!ing.is_optional,
+              }))
+            : [
+                {
+                  raw_text: '',
+                  quantity: undefined,
+                  unit: 'g',
+                  preparation: '',
+                  is_optional: false,
+                },
+              ],
+        )
+        setSteps(
+          data.steps.length > 0
+            ? data.steps.map((st) => ({
+                instruction: st.instruction || '',
+                duration_min: st.duration_min,
+                temperature_c: st.temperature_c,
+                technique: st.technique || '',
+              }))
+            : [
+                {
+                  instruction: '',
+                  duration_min: undefined,
+                  temperature_c: undefined,
+                  technique: '',
+                },
+              ],
+        )
+        setSelectedTagIds(data.tags.map((t) => t.id))
+      } catch (err: any) {
+        console.error('Erro ao carregar receita para edição:', err)
+        toast({
+          title: 'Não carregamos a receita',
+          description:
+            err?.message || 'Só o autor pode editar. Verifique o link e tente novamente.',
+          variant: 'destructive',
+        })
+        navigate('/minha-cozinha')
+      } finally {
+        setLoadingInitial(false)
+      }
+    }
+
+    loadRecipe()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, isEditing])
+
   // Handle image upload
   const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -213,7 +291,7 @@ export default function RecipeForm() {
 
     setSubmitting(true)
     try {
-      const created = await recipeService.createRecipe({
+      const payload = {
         title: title.trim(),
         description: description.trim() || undefined,
         story: story.trim() || undefined,
@@ -230,19 +308,29 @@ export default function RecipeForm() {
         ingredients: validIngredients,
         steps: validSteps,
         tagIds: selectedTagIds,
-      })
+      }
 
-      toast({
-        title: 'No ar. Copie o link e mande pra alguém.',
-        description: 'Sua receita foi salva no acervo.',
-      })
-
-      const authorUsername = currentUser?.username || 'autor'
-      navigate(`/r/${authorUsername}/${created.slug}`)
+      if (isEditing && id) {
+        const updated = await recipeService.updateRecipe(id, payload)
+        toast({
+          title: 'Receita atualizada!',
+          description: 'Suas alterações já estão no ar.',
+        })
+        const authorUsername = updated.expand?.author?.username || currentUser?.username || 'autor'
+        navigate(`/r/${authorUsername}/${updated.slug}`)
+      } else {
+        const created = await recipeService.createRecipe(payload)
+        toast({
+          title: 'No ar. Copie o link e mande pra alguém.',
+          description: 'Sua receita foi salva no acervo.',
+        })
+        const authorUsername = created.expand?.author?.username || currentUser?.username || 'autor'
+        navigate(`/r/${authorUsername}/${created.slug}`)
+      }
     } catch (err: any) {
-      console.error('Error creating recipe:', err)
+      console.error(isEditing ? 'Error updating recipe:' : 'Error creating recipe:', err)
       toast({
-        title: 'Erro ao criar receita',
+        title: isEditing ? 'Erro ao atualizar receita' : 'Erro ao criar receita',
         description: err.message || 'Verifique os campos e tente novamente.',
         variant: 'destructive',
       })
@@ -262,7 +350,11 @@ export default function RecipeForm() {
           Voltar para Minha Cozinha
         </Link>
         <h1 className="font-serif-recipe text-3xl sm:text-4xl font-extrabold text-foreground mt-2">
-          {isEditing ? 'Editar Receita' : 'Cadastrar Nova Receita'}
+          {loadingInitial
+            ? 'Carregando receita...'
+            : isEditing
+              ? 'Editar Receita'
+              : 'Cadastrar Nova Receita'}
         </h1>
         <p className="text-sm text-muted-foreground">
           Preencha os detalhes da sua receita. Ingredientes estruturados e licença autoral garantem

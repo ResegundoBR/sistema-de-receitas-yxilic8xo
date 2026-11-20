@@ -5,6 +5,9 @@
 // IMPORTANTE: o JSVM do PocketBase executa cada callback em um pool separado —
 // funções/variáveis de topo NÃO são visíveis dentro dos callbacks. Toda a
 // lógica é, portanto, DUPLICADA inline em cada callback abaixo.
+// IMPORTANTE 2: nesta versão do JSVM, $app.countRecords() não aceita string de
+// filtro ("could not convert ... to dbx.Expression"). Usar
+// $app.findRecordsByFilter(collection, filter, sort, limit, offset).length.
 
 // Ao salvar uma receita numa coleção: atualiza o contador na hora.
 onRecordAfterCreateSuccess((e) => {
@@ -12,9 +15,27 @@ onRecordAfterCreateSuccess((e) => {
   if (recipeId) {
     try {
       const rec = $app.findRecordById('recipes', recipeId)
-      const ingCount = $app.countRecords('recipe_ingredients', 'recipe = "' + recipeId + '"')
-      const varCount = $app.countRecords('recipes', 'parent_recipe = "' + recipeId + '"')
-      const saveCount = $app.countRecords('saved_recipes', 'recipe = "' + recipeId + '"')
+      const ingCount = $app.findRecordsByFilter(
+        'recipe_ingredients',
+        'recipe = "' + recipeId + '"',
+        '',
+        0,
+        0,
+      ).length
+      const varCount = $app.findRecordsByFilter(
+        'recipes',
+        'parent_recipe = "' + recipeId + '"',
+        '',
+        0,
+        0,
+      ).length
+      const saveCount = $app.findRecordsByFilter(
+        'saved_recipes',
+        'recipe = "' + recipeId + '"',
+        '',
+        0,
+        0,
+      ).length
 
       if (
         rec.getInt('ingredient_count') !== ingCount ||
@@ -39,9 +60,27 @@ onRecordAfterDeleteSuccess((e) => {
   if (recipeId) {
     try {
       const rec = $app.findRecordById('recipes', recipeId)
-      const ingCount = $app.countRecords('recipe_ingredients', 'recipe = "' + recipeId + '"')
-      const varCount = $app.countRecords('recipes', 'parent_recipe = "' + recipeId + '"')
-      const saveCount = $app.countRecords('saved_recipes', 'recipe = "' + recipeId + '"')
+      const ingCount = $app.findRecordsByFilter(
+        'recipe_ingredients',
+        'recipe = "' + recipeId + '"',
+        '',
+        0,
+        0,
+      ).length
+      const varCount = $app.findRecordsByFilter(
+        'recipes',
+        'parent_recipe = "' + recipeId + '"',
+        '',
+        0,
+        0,
+      ).length
+      const saveCount = $app.findRecordsByFilter(
+        'saved_recipes',
+        'recipe = "' + recipeId + '"',
+        '',
+        0,
+        0,
+      ).length
 
       if (
         rec.getInt('ingredient_count') !== ingCount ||
@@ -68,9 +107,27 @@ cronAdd('reconcile_recipe_counts', '*/30 * * * *', () => {
       const recipeId = allRecipes[i].id
       try {
         const rec = $app.findRecordById('recipes', recipeId)
-        const ingCount = $app.countRecords('recipe_ingredients', 'recipe = "' + recipeId + '"')
-        const varCount = $app.countRecords('recipes', 'parent_recipe = "' + recipeId + '"')
-        const saveCount = $app.countRecords('saved_recipes', 'recipe = "' + recipeId + '"')
+        const ingCount = $app.findRecordsByFilter(
+          'recipe_ingredients',
+          'recipe = "' + recipeId + '"',
+          '',
+          0,
+          0,
+        ).length
+        const varCount = $app.findRecordsByFilter(
+          'recipes',
+          'parent_recipe = "' + recipeId + '"',
+          '',
+          0,
+          0,
+        ).length
+        const saveCount = $app.findRecordsByFilter(
+          'saved_recipes',
+          'recipe = "' + recipeId + '"',
+          '',
+          0,
+          0,
+        ).length
 
         if (
           rec.getInt('ingredient_count') !== ingCount ||
