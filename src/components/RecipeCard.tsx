@@ -19,8 +19,9 @@ export function RecipeCard({ recipe, showStatusBadge }: RecipeCardProps) {
   const licenseLabel = getLicenseLabel(recipe.license)
   const hasCover = Boolean(recipe.cover)
 
-  // Link público da receita: /r/:username/:slug (host do backend, com OG tags)
-  const recipeLink = publicRecipeUrl(authorUsername, recipe.slug)
+  // Link público da receita: /r/:username/:slug (host do backend, com OG tags),
+  // versionado pela data de atualização para invalidar o cache do WhatsApp.
+  const recipeLink = publicRecipeUrl(authorUsername, recipe.slug, recipe)
 
   return (
     <Link

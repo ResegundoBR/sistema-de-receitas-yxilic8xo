@@ -191,7 +191,7 @@ export default function Collections() {
             if (!recipe) return null
             const author = recipe.expand?.author
             const authorUsername = author?.username || 'autor'
-            const publicLink = publicRecipeUrl(authorUsername, recipe.slug)
+            const publicLink = publicRecipeUrl(authorUsername, recipe.slug, recipe)
 
             return (
               <Card

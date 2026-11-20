@@ -179,7 +179,7 @@ export default function MyKitchen() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRecipes.map((recipe) => {
             const authorUsername = currentUser?.username || 'autor'
-            const publicUrl = publicRecipeUrl(authorUsername, recipe.slug)
+            const publicUrl = publicRecipeUrl(authorUsername, recipe.slug, recipe)
 
             return (
               <Card

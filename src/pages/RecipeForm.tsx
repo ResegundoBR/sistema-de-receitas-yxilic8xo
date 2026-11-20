@@ -318,7 +318,7 @@ export default function RecipeForm() {
           description: 'Suas alterações já estão no ar.',
         })
         const authorUsername = updated.expand?.author?.username || currentUser?.username || 'autor'
-        navigate(publicRecipeUrl(authorUsername, updated.slug))
+        navigate(publicRecipeUrl(authorUsername, updated.slug, updated))
       } else {
         const created = await recipeService.createRecipe(payload)
         toast({
@@ -326,7 +326,7 @@ export default function RecipeForm() {
           description: 'Sua receita foi salva no acervo.',
         })
         const authorUsername = created.expand?.author?.username || currentUser?.username || 'autor'
-        navigate(publicRecipeUrl(authorUsername, created.slug))
+        navigate(publicRecipeUrl(authorUsername, created.slug, created))
       }
     } catch (err: any) {
       console.error(isEditing ? 'Error updating recipe:' : 'Error creating recipe:', err)

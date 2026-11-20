@@ -204,25 +204,27 @@ export default function RecipeDetail() {
   // Share link (ideal for WhatsApp) — aponta para o backend, onde o hook
   // routes.pb.js entrega as meta tags OG que montam o cartão.
   const handleShare = async () => {
-    const url = username && slug ? publicRecipeUrl(username, slug) : window.location.href
+    const url = username && slug ? publicRecipeUrl(username, slug, recipe) : window.location.href
     const shareText = `Confira esta receita: ${recipe?.title} por @${username}!`
 
-    if (navigator.share) {
-      try {
+    // Um único caminho de cópia: ou navigator.share OU clipboard.writeText —
+    // nunca ambos (o fallback anterior podia copiar o link duplicado).
+    try {
+      if (navigator.share && !navigator.clipboard) {
         await navigator.share({
           title: recipe?.title,
           text: recipe?.description || shareText,
           url: url,
         })
-      } catch {
-        /* intentionally ignored */
+      } else {
+        await navigator.clipboard.writeText(url)
+        toast({
+          title: 'Link copiado!',
+          description: 'Cole no WhatsApp para compartilhar a receita.',
+        })
       }
-    } else {
-      navigator.clipboard.writeText(url)
-      toast({
-        title: 'Link copiado!',
-        description: 'Cole no WhatsApp para compartilhar a receita.',
-      })
+    } catch {
+      /* usuário cancelou ou cópia falhou */
     }
   }
 
