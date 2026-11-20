@@ -40,39 +40,67 @@ routerAdd('GET', '/r/{username}/{slug}', (e) => {
   const coverFile = recipe.getString('cover')
 
   // WhatsApp e demais redes exigem URL ABSOLUTA no og:image.
+  // Thumbs do PocketBase são geradas sob demanda via ?thumb= (não é migração).
   const PUBLIC_BASE_URL = 'https://sistema-de-receitas-6b58a.goskip.app'
-  let imageUrl = 'https://img.usecurling.com/p/1200/630?q=recipe,food'
+  // Imagem padrão (receita sem capa), absoluta no domínio real do app.
+  let imageUrl = PUBLIC_BASE_URL + '/og-receita-padrao.jpg'
   if (coverFile) {
     imageUrl =
-      PUBLIC_BASE_URL + '/api/files/' + recipe.collection().id + '/' + recipe.id + '/' + coverFile
+      PUBLIC_BASE_URL +
+      '/api/files/' +
+      recipe.collection().id +
+      '/' +
+      recipe.id +
+      '/' +
+      coverFile +
+      '?thumb=1200x630'
   }
 
   const currentUrl = e.request.url.string()
 
   if (isCrawler) {
+    // Escapa &, <, >, ", ' para o título/descrição nunca quebrarem o HTML
+    // das meta tags (aspas no título, por exemplo).
+    const escapeHtml = (s) =>
+      String(s)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;')
+
+    const safeTitle = escapeHtml(title)
+    const safeDescription = escapeHtml(description)
+
+    // Nome de exibição vem da coleção users (recipes.author_name não existe)
     const authorName = author ? author.getString('display_name') : username
+
     const html = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <title>${title} | Rodela</title>
-  <meta name="description" content="${description}">
+  <title>${safeTitle} | Rodela</title>
+  <meta name="description" content="${safeDescription}">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="${title}">
-  <meta property="og:description" content="${description}">
+  <meta property="og:site_name" content="Rodela">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="${safeTitle}">
+  <meta property="og:description" content="${safeDescription}">
   <meta property="og:image" content="${imageUrl}">
   <meta property="og:url" content="${currentUrl}">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="${title}">
-  <meta name="twitter:description" content="${description}">
+  <meta name="twitter:title" content="${safeTitle}">
+  <meta name="twitter:description" content="${safeDescription}">
   <meta name="twitter:image" content="${imageUrl}">
 </head>
 <body>
-  <h1>${title}</h1>
-  <p>${description}</p>
-  <p>Por ${authorName}</p>
+  <h1>${safeTitle}</h1>
+  <p>${safeDescription}</p>
+  <p>Por ${escapeHtml(authorName)}</p>
 </body>
 </html>`
+
+    e.response.header().set('Cache-Control', 'public, max-age=300')
     return e.html(200, html)
   }
 

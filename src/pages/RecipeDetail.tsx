@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { recipeService, collectionService } from '@/services/recipeService'
 import { authService } from '@/services/authService'
+import { useDocumentMeta } from '@/hooks/useDocumentMeta'
 import { Recipe, RecipeIngredient, RecipeStep, Tag, RecipeCollection } from '@/types/recipe'
 import {
   Clock,
@@ -60,6 +61,20 @@ export default function RecipeDetail() {
   const [creatingCollection, setCreatingCollection] = useState(false)
   // Contador de salvamentos (espelha recipes.save_count; reconciliado por hook)
   const [saveCount, setSaveCount] = useState(0)
+
+  // Título da aba + meta tags do cliente (og/twitter/canonical) para
+  // complementar as tags que o servidor já entrega aos crawlers.
+  // Hook chamado incondicionalmente (regra de hooks) — os guardes de
+  // loading/404 ficam abaixo dele.
+  useDocumentMeta({
+    title: recipe ? `${recipe.title} | Rodela` : 'Rodela',
+    description:
+      recipe?.description ||
+      'Receita de gente de verdade: veja o passo a passo completo no Rodela.',
+    image: recipe ? recipeService.getLargeFileUrl(recipe) || undefined : undefined,
+    url: typeof window !== 'undefined' ? window.location.href : undefined,
+    type: recipe ? 'article' : undefined,
+  })
 
   // Load recipe
   useEffect(() => {
