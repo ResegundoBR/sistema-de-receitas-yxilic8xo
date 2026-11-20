@@ -5,6 +5,7 @@ import { authService } from '@/services/authService'
 import { Recipe, Category, Tag } from '@/types/recipe'
 import { RecipeCard } from '@/components/RecipeCard'
 import { DragScrollRow } from '@/components/DragScrollRow'
+import { SafeBoundary } from '@/components/SafeBoundary'
 import { RodelaMark } from '@/components/brand/RodelaMark'
 import {
   Search,
@@ -31,7 +32,16 @@ const dimensionLabels: Record<string, string> = {
   estacao: 'Estação do Ano',
 }
 
+/** Home protegida: qualquer falha de renderização fica contida, sem tela de erro. */
 export default function Index() {
+  return (
+    <SafeBoundary>
+      <IndexContent />
+    </SafeBoundary>
+  )
+}
+
+function IndexContent() {
   const [searchParams, setSearchParams] = useSearchParams()
   const searchFromUrl = searchParams.get('q') || ''
   const categoryFromUrl = searchParams.get('categoria') || ''
@@ -260,32 +270,34 @@ export default function Index() {
             </div>
 
             <DragScrollRow className="pb-2">
-              <button
-                onClick={() => handleSelectCategory('')}
-                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
-                  !categoryFromUrl
-                    ? 'bg-espresso text-creme'
-                    : 'bg-creme border border-border text-espresso hover:border-tomate/50'
-                }`}
-              >
-                Todas as Receitas
-              </button>
-              {rootCategories.map((cat) => {
-                const isSelected = categoryFromUrl === cat.slug
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => handleSelectCategory(cat.slug)}
-                    className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
-                      isSelected
-                        ? 'bg-tomate text-creme font-semibold'
-                        : 'bg-creme border border-border text-espresso hover:border-tomate/50'
-                    }`}
-                  >
-                    {cat.name}
-                  </button>
-                )
-              })}
+              <SafeBoundary>
+                <button
+                  onClick={() => handleSelectCategory('')}
+                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
+                    !categoryFromUrl
+                      ? 'bg-espresso text-creme'
+                      : 'bg-creme border border-border text-espresso hover:border-tomate/50'
+                  }`}
+                >
+                  Todas as Receitas
+                </button>
+                {rootCategories.map((cat) => {
+                  const isSelected = categoryFromUrl === cat.slug
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => handleSelectCategory(cat.slug)}
+                      className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
+                        isSelected
+                          ? 'bg-tomate text-creme font-semibold'
+                          : 'bg-creme border border-border text-espresso hover:border-tomate/50'
+                      }`}
+                    >
+                      {cat.name}
+                    </button>
+                  )
+                })}
+              </SafeBoundary>
             </DragScrollRow>
           </div>
 
@@ -333,22 +345,24 @@ export default function Index() {
                       {dimensionLabels[dimension] || dimension}
                     </span>
                     <DragScrollRow className="items-start">
-                      {dimensionTags.map((tag) => {
-                        const isTagSelected = tagsFromUrl.includes(tag.slug)
-                        return (
-                          <button
-                            key={tag.id}
-                            onClick={() => handleToggleTag(tag.slug)}
-                            className={`text-xs px-3 py-1.5 rounded-lg border whitespace-nowrap shrink-0 transition-all ${
-                              isTagSelected
-                                ? 'bg-lima text-espresso border-lima font-semibold'
-                                : 'bg-background hover:bg-areia-soft border-border text-espresso'
-                            }`}
-                          >
-                            {tag.name}
-                          </button>
-                        )
-                      })}
+                      <SafeBoundary>
+                        {dimensionTags.map((tag) => {
+                          const isTagSelected = tagsFromUrl.includes(tag.slug)
+                          return (
+                            <button
+                              key={tag.id}
+                              onClick={() => handleToggleTag(tag.slug)}
+                              className={`text-xs px-3 py-1.5 rounded-lg border whitespace-nowrap shrink-0 transition-all ${
+                                isTagSelected
+                                  ? 'bg-lima text-espresso border-lima font-semibold'
+                                  : 'bg-background hover:bg-areia-soft border-border text-espresso'
+                              }`}
+                            >
+                              {tag.name}
+                            </button>
+                          )
+                        })}
+                      </SafeBoundary>
                     </DragScrollRow>
                   </div>
                 ))}
@@ -382,7 +396,9 @@ export default function Index() {
         ) : featured.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {featured.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
+              <SafeBoundary key={recipe.id}>
+                <RecipeCard recipe={recipe} />
+              </SafeBoundary>
             ))}
           </div>
         ) : (
@@ -527,7 +543,9 @@ export default function Index() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-4">
                 {recipes.map((recipe) => (
-                  <RecipeCard key={recipe.id} recipe={recipe} />
+                  <SafeBoundary key={recipe.id}>
+                    <RecipeCard recipe={recipe} />
+                  </SafeBoundary>
                 ))}
               </div>
             )}

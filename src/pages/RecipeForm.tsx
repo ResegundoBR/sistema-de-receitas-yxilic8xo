@@ -30,7 +30,13 @@ import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
 import { getLicenseLabel } from '@/lib/license'
-import { publicRecipeUrl } from '@/lib/shareLinks'
+
+/** Rota interna do SPA da receita (/r/:username/:slug), sem o domínio do backend. */
+function internalRecipePath(username: string, slug: string): string {
+  const user = username.trim().replace(/^\/+|\/+$/g, '')
+  const recipeSlug = slug.trim().replace(/^\/+|\/+$/g, '')
+  return user && recipeSlug ? `/r/${user}/${recipeSlug}` : '/minha-cozinha'
+}
 
 interface IngredientRow {
   raw_text: string
@@ -318,7 +324,7 @@ export default function RecipeForm() {
           description: 'Suas alterações já estão no ar.',
         })
         const authorUsername = updated.expand?.author?.username || currentUser?.username || 'autor'
-        navigate(publicRecipeUrl(authorUsername, updated.slug, updated))
+        navigate(internalRecipePath(authorUsername, updated.slug))
       } else {
         const created = await recipeService.createRecipe(payload)
         toast({
@@ -326,7 +332,7 @@ export default function RecipeForm() {
           description: 'Sua receita foi salva no acervo.',
         })
         const authorUsername = created.expand?.author?.username || currentUser?.username || 'autor'
-        navigate(publicRecipeUrl(authorUsername, created.slug, created))
+        navigate(internalRecipePath(authorUsername, created.slug))
       }
     } catch (err: any) {
       console.error(isEditing ? 'Error updating recipe:' : 'Error creating recipe:', err)
